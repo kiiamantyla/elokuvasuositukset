@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Elokuvasuositukset</title>
+</head>
+
+<body>
+  <h1>Elokuvasuositukset</h1>
+
+  {% if session.username %}
+  <p>
+    Olet kirjautunut nimellä {{ session.username }}
+  </p>
+    <a href="/logout">Kirjaudu ulos</a>
+  <p>
+
+  </p>
+
+  {%endif %}
+
+
+  {% if not session.username %}
+  <p>
+    <a href="/login">Kirjaudu sisään</a>
+    <a href="/login">Luo tunnus</a>
+  </p>
+
+  {%endif %}
+
+</body>
+
+</html>
