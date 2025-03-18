@@ -19,10 +19,16 @@
   </p>
 
   <p>
-    <a href="/new_item">Uusi elokuva</a>
+    <a href="/new_movie">Uusi elokuva</a>
   </p>
-  {%endif %}
+  {% endif %}
+  <h2>Elokuvat</h2>
 
+  <ul>
+    {% for movie in movies %}
+    <li><a href="/movie/{{ movie.id }}">{{ movie.title }}</a></li>
+    {% endfor %}
+  </ul>
 
   {% if not session.username %}
   <p>
@@ -30,7 +36,7 @@
     <a href="/login">Luo tunnus</a>
   </p>
 
-  {%endif %}
+  {% endif %}
 
 </body>
 

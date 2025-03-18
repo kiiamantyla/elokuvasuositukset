@@ -4,7 +4,7 @@ from flask import redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
-import items
+import movies
 
 
 app = Flask(__name__)
@@ -13,23 +13,29 @@ app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    all_movies = movies.get_movies()
+    return render_template("index.html", movies=all_movies)
 
 
-@app.route("/new_item")
-def new_item():
-    return render_template("new_item.html")
+@app.route("/movie/<int:movie_id>")
+def show_movie(movie_id):
+    movie = movies.get_movie(movie_id)
+    return render_template("show_movie.html",movie=movie)
 
 
-@app.route("/create_item", methods=["POST"])
-def create_item():
+@app.route("/new_movie")
+def new_movie():
+    return render_template("new_movie.html")
+
+
+@app.route("/create_movie", methods=["POST"])
+def create_movie():
     title = request.form["title"]
     year = request.form["year"]
     recommendation = request.form["recommendation"]
     user_id = session["user_id"]
 
-    items.add_item(title, year, recommendation, user_id)
-
+    movies.add_movie(title, year, recommendation, user_id)
     return redirect("/")
 
 
@@ -76,6 +82,7 @@ def login():
             return redirect("/")
         else:
             return "VIRHE: väärä tunnus tai salasana"
+
 
 @app.route("/logout")
 def logout():
