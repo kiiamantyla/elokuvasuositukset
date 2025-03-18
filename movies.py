@@ -12,10 +12,20 @@ def get_movies():
 
 
 def get_movie(movie_id):
-    sql = """SELECT movies.title,
+    sql = """SELECT movies.id,
+                    movies.title,
                     movies.year,
                     movies.recommendation,
+                    users.id user_id,
                     users.username
            FROM movies, users
            WHERE movies.user_id = users.id AND movies.id = ?"""
     return db.query(sql, [movie_id])[0]
+
+
+def update_movie(movie_id, title, year, recommendation):
+    sql = """UPDATE movies SET title = ?,
+                               year = ?,
+                               recommendation = ?
+                           WHERE id = ?"""
+    db.execute(sql, [title, year, recommendation, movie_id])

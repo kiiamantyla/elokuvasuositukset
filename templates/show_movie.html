@@ -7,6 +7,12 @@
 
 <body>
   <h1>{{ movie.title }}</h1>
+
+  {% if session.user_id == movie.user_id %}
+  <p>
+    <a href="/edit_movie/{{ movie.id }}">Muokkaa<a/>
+  </p>
+  {% endif %}
   <p>
     {{ movie.recommendation }}
   </p>
