@@ -10,13 +10,17 @@
 
   {% if session.username %}
   <p>
-    Olet kirjautunut nimellä {{ session.username }}
+    Olet kirjautunut nimellä {{ session.username }}, id-numerosi on {{ session.user_id }}
   </p>
-    <a href="/logout">Kirjaudu ulos</a>
+  </p>
+
   <p>
-
+    <a href="/logout">Kirjaudu ulos</a>
   </p>
 
+  <p>
+    <a href="/new_item">Uusi elokuva</a>
+  </p>
   {%endif %}
 
 

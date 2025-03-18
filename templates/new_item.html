@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Uusi elokuvasuositus</title>
+</head>
+
+<body>
+  <h1>Uusi elokuva</h1>
+  <form action="/create_item" method="post">
+    <p>
+      Elokuvan nimi: <br />
+      <input type="text" name="title" />
+    </p>
+    <p>
+      Elokuvan julkaisuvuosi: <br />
+      <input type="text" name="year" size="5"/>
+    </p>
+    <p>
+      Suositusteksti: <br />
+      <textarea name="recommendation" rows="8" cols="60"></textarea>
+    </p>
+    <input type="submit" value="Luo suositus" />
+  </form>
+</body>
+
+</html>
