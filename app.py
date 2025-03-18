@@ -4,6 +4,7 @@ from flask import redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
+import items
 
 
 app = Flask(__name__)
@@ -27,10 +28,7 @@ def create_item():
     recommendation = request.form["recommendation"]
     user_id = session["user_id"]
 
-    sql = """INSERT INTO movies (title, year, recommendation, user_id)
-             VALUES (?, ?, ?, ?)"""
-
-    db.execute(sql, [title, year, recommendation, user_id])
+    items.add_item(title, year, recommendation, user_id)
 
     return redirect("/")
 
