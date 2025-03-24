@@ -56,6 +56,22 @@ def update_movie():
     return redirect("/movie/" + str(movie_id))
 
 
+@app.route("/remove_movie/<int:movie_id>", methods=["GET", "POST"])
+def remove_movie(movie_id):
+    if request.method == "GET":
+        movie = movies.get_movie(movie_id)
+        return render_template("remove_movie.html", movie=movie)
+
+    if request.method == "POST":
+        if "remove" in request.form:
+            movies.remove_movie(movie_id)
+            return redirect("/")
+        else:
+            return redirect("/movie/" + str(movie_id))
+
+
+
+
 @app.route("/register")
 def register():
     return render_template("register.html")

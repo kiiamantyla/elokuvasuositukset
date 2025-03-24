@@ -11,6 +11,7 @@
   {% if session.user_id == movie.user_id %}
   <p>
     <a href="/edit_movie/{{ movie.id }}">Muokkaa<a/>
+    <a href="/remove_movie/{{ movie.id }}">Poista<a/>
   </p>
   {% endif %}
   <p>

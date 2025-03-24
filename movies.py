@@ -29,3 +29,8 @@ def update_movie(movie_id, title, year, recommendation):
                                recommendation = ?
                            WHERE id = ?"""
     db.execute(sql, [title, year, recommendation, movie_id])
+
+
+def remove_movie(movie_id):
+    sql = "DELETE FROM movies WHERE id = ?"
+    db.execute(sql, [movie_id])
