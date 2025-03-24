@@ -31,6 +31,8 @@ def find_movie():
 @app.route("/movie/<int:movie_id>")
 def show_movie(movie_id):
     movie = movies.get_movie(movie_id)
+    if not movie:
+        abort(404)
     return render_template("show_movie.html",movie=movie)
 
 
@@ -53,6 +55,8 @@ def create_movie():
 @app.route("/edit_movie/<int:movie_id>")
 def edit_movie(movie_id):
     movie = movies.get_movie(movie_id)
+    if not movie:
+        abort(404)
     if movie["user_id"] != session["user_id"]:
         abort(403)
     return render_template("edit_movie.html", movie=movie)
@@ -62,6 +66,8 @@ def edit_movie(movie_id):
 def update_movie():
     movie_id = request.form["movie_id"]
     movie = movies.get_movie(movie_id)
+    if not movie:
+        abort(404)
     if movie["user_id"] != session["user_id"]:
         abort(403)
 
@@ -76,6 +82,8 @@ def update_movie():
 @app.route("/remove_movie/<int:movie_id>", methods=["GET", "POST"])
 def remove_movie(movie_id):
     movie = movies.get_movie(movie_id)
+    if not movie:
+        abort(404)
     if movie["user_id"] != session["user_id"]:
         abort(403)
 
@@ -96,7 +104,7 @@ def register():
 
 
 @app.route("/create_user", methods=["POST"])
-def create():
+def create_user():
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]

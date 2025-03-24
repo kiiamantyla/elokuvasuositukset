@@ -20,7 +20,8 @@ def get_movie(movie_id):
                     users.username
            FROM movies, users
            WHERE movies.user_id = users.id AND movies.id = ?"""
-    return db.query(sql, [movie_id])[0]
+    result = db.query(sql, [movie_id])
+    return result[0] if result else None
 
 
 def update_movie(movie_id, title, year, recommendation):
