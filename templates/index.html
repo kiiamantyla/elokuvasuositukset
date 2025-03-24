@@ -8,6 +8,14 @@
 <body>
   <h1>Elokuvasuositukset</h1>
 
+  {% if not session.username %}
+  <p>
+    <a href="/login">Kirjaudu sisään</a>
+    <a href="/register">Luo tunnus</a>
+  </p>
+
+  {% endif %}
+
   {% if session.username %}
   <p>
     Olet kirjautunut nimellä {{ session.username }}, id-numerosi on {{ session.user_id }}
@@ -20,9 +28,12 @@
 
   <p>
     <a href="/new_movie">Uusi elokuva</a>
-    <a href="/find_movie">Etsi elokuva</a>
   </p>
   {% endif %}
+
+  <p>
+    <a href="/find_movie">Etsi elokuva</a>
+  </p>
   <h2>Elokuvat</h2>
 
   <ul>
@@ -30,14 +41,6 @@
     <li><a href="/movie/{{ movie.id }}">{{ movie.title }}</a></li>
     {% endfor %}
   </ul>
-
-  {% if not session.username %}
-  <p>
-    <a href="/login">Kirjaudu sisään</a>
-    <a href="/register">Luo tunnus</a>
-  </p>
-
-  {% endif %}
 
 </body>
 

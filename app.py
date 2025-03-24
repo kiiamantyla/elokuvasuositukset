@@ -11,6 +11,11 @@ app = Flask(__name__)
 app.secret_key = config.secret_key
 
 
+def require_login():
+    if "user_id" not in session:
+        abort(403)
+
+
 @app.route("/")
 def index():
     all_movies = movies.get_movies()
@@ -38,11 +43,14 @@ def show_movie(movie_id):
 
 @app.route("/new_movie")
 def new_movie():
+    require_login()
     return render_template("new_movie.html")
 
 
 @app.route("/create_movie", methods=["POST"])
 def create_movie():
+    require_login()
+
     title = request.form["title"]
     year = request.form["year"]
     recommendation = request.form["recommendation"]
@@ -54,6 +62,8 @@ def create_movie():
 
 @app.route("/edit_movie/<int:movie_id>")
 def edit_movie(movie_id):
+    require_login()
+
     movie = movies.get_movie(movie_id)
     if not movie:
         abort(404)
@@ -64,6 +74,8 @@ def edit_movie(movie_id):
 
 @app.route("/update_movie", methods=["POST"])
 def update_movie():
+    require_login()
+
     movie_id = request.form["movie_id"]
     movie = movies.get_movie(movie_id)
     if not movie:
@@ -81,6 +93,8 @@ def update_movie():
 
 @app.route("/remove_movie/<int:movie_id>", methods=["GET", "POST"])
 def remove_movie(movie_id):
+    require_login()
+
     movie = movies.get_movie(movie_id)
     if not movie:
         abort(404)
