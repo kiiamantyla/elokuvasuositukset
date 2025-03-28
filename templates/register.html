@@ -6,7 +6,8 @@
 </head>
 
 <body>
-  <form action="/create" method="post">
+  <h2>Luo tunnus</h2>
+  <form action="/create_user" method="post">
     <p>
       Tunnus: <br />
       <input type="text" name="username" />
@@ -20,6 +21,11 @@
       <input type="password" name="password2" />
     </p>
     <input type="submit" value="Luo tunnus" />
+
+    <p>
+      Onko sinulla jo tunnus?
+      <a href="/login">Kirjaudu sisään</a>
+    </p>
   </form>
 </body>
 
