@@ -56,7 +56,7 @@ def create_movie():
     if not title or len(title) > 90:
         abort(403)
     year = request.form["year"]
-    if not re.search("^[1-9][0-9]{0,4}$", year):
+    if not re.search("^[1-9][0-9]{0,3}$", year):
         abort(403)
     recommendation = request.form["recommendation"]
     if not recommendation or len(recommendation) > 1000:
@@ -91,8 +91,14 @@ def update_movie():
         abort(403)
 
     title = request.form["title"]
+    if not title or len(title) > 90:
+        abort(403)
     year = request.form["year"]
+    if not re.search("^[1-9][0-9]{0,3}$", year):
+        abort(403)
     recommendation = request.form["recommendation"]
+    if not recommendation or len(recommendation) > 1000:
+        abort(403)
 
     movies.update_movie(movie_id, title, year, recommendation)
     return redirect("/movie/" + str(movie_id))

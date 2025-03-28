@@ -10,15 +10,15 @@
   <form action="/update_movie" method="post">
     <p>
       Elokuvan nimi: <br />
-      <input type="text" name="title" value="{{ movie.title }}"/>
+      <input type="text" name="title" value="{{ movie.title }}" maxlength="90" required />
     </p>
     <p>
       Elokuvan julkaisuvuosi: <br />
-      <input type="text" name="year" size="5" value="{{ movie.year }}"/>
+      <input type="text" name="year" size="5" value="{{ movie.year }}" pattern="[1-9][0-9]{0,3}" required />
     </p>
     <p>
       Suositusteksti: <br />
-      <textarea name="recommendation" rows="8" cols="60">{{ movie.recommendation }}</textarea>
+      <textarea name="recommendation" rows="8" cols="60" maxlength="1000" required>{{ movie.recommendation }}</textarea>
     </p>
     <input type="hidden" name="movie_id" value="{{ movie.id }}" />
     <input type="submit" value="Päivitä suositusta" />
