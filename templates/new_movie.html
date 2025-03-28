@@ -10,15 +10,15 @@
   <form action="/create_movie" method="post">
     <p>
       Elokuvan nimi: <br />
-      <input type="text" name="title" />
+      <input type="text" name="title" maxlength="90" required />
     </p>
     <p>
       Elokuvan julkaisuvuosi: <br />
-      <input type="text" name="year" size="5"/>
+      <input type="text" name="year" size="5" pattern="[1-9][0-9]{0,4}" required />
     </p>
     <p>
       Suositusteksti: <br />
-      <textarea name="recommendation" rows="8" cols="60"></textarea>
+      <textarea name="recommendation" rows="8" cols="60" maxlength="1000" required></textarea>
     </p>
     <input type="submit" value="Luo suositus" />
   </form>

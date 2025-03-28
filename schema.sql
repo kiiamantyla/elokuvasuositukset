@@ -7,7 +7,7 @@ CREATE TABLE users (
 CREATE TABLE movies (
     id INTEGER PRIMARY KEY,
     title TEXT,
-    year TEXT,
+    year INTEGER,
     recommendation TEXT,
     user_id INTEGER REFERENCES users
 );

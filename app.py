@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
 import movies
+import re
 
 
 app = Flask(__name__)
@@ -52,8 +53,14 @@ def create_movie():
     require_login()
 
     title = request.form["title"]
+    if not title or len(title) > 90:
+        abort(403)
     year = request.form["year"]
+    if not re.search("^[1-9][0-9]{0,4}$", year):
+        abort(403)
     recommendation = request.form["recommendation"]
+    if not recommendation or len(recommendation) > 1000:
+        abort(403)
     user_id = session["user_id"]
 
     movies.add_movie(title, year, recommendation, user_id)
