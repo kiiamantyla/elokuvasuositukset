@@ -9,23 +9,28 @@
   {% if session.username %}
   <p>
     Olet kirjautunut nimellä {{ session.username }}
+  </p>
   <p>
     <a href="/logout">Kirjaudu ulos</a>
   </p>
-  {% else %}
+  {% endif %}
   <h2>Kirjaudu sisään</h2>
   <form action="/login" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" />
+      <input type="text" name="username" required />
     </p>
     <p>
       Salasana: <br />
-      <input type="password" name="password" />
+      <input type="password" name="password" required />
     </p>
     <input type="submit" value="Kirjaudu" />
+
+    <p>
+      Eikö sinulla ole vielä tunnusta?
+      <a href="/register">Rekisteröidy</a>
+    </p>
   </form>
-  {% endif %}
 </body>
 
 </html>
