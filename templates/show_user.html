@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Käyttäjäsivut</title>
+</head>
+
+<body>
+  <h1>Käyttäjä {{ user.username }}</h1>
+
+
+  {% if items %}
+    {% if items | count == 1 %}
+      <p>Käyttäjällä on yhteensä 1 elokuvasuositus.</p>
+    {% else %}
+      <p>Käyttäjällä on yhteensä {{ items | count }} elokuvasuositusta.</p>
+    {% endif %}
+
+    <h2>Elokuvasuositukset</h2>
+    <ul>
+      {% for item in items %}
+        <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Käyttäjällä ei ole vielä elokuvasuosituksia.</p>
+  {% endif %}
+  </p>
+
+  <p>
+    <a href="/">Takaisin etusivulle</a>
+  </p>
+</body>
+
+</html>

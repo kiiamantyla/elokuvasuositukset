@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
 import movies
+import users
 
 
 
@@ -24,6 +25,15 @@ def require_login():
 def index():
     all_movies = movies.get_movies()
     return render_template("index.html", movies=all_movies)
+
+
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    items = users.get_items(user_id)
+    return render_template("show_user.html", user=user, items=items)
 
 
 @app.route("/find_movie")

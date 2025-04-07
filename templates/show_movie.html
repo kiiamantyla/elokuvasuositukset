@@ -21,7 +21,7 @@
     Julkaisuvuosi: {{ movie.year }}
   </p>
   <p>
-    Suosittelija: {{ movie.username }}
+    Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a>
   </p>
   <p>
     <a href="/">Takaisin etusivulle</a>
