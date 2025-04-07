@@ -52,7 +52,8 @@ def show_movie(movie_id):
     movie = movies.get_movie(movie_id)
     if not movie:
         abort(404)
-    return render_template("show_movie.html",movie=movie)
+    classes = movies.get_classes(movie_id)
+    return render_template("show_movie.html",movie=movie, classes=classes)
 
 
 @app.route("/new_movie")
@@ -76,7 +77,12 @@ def create_movie():
         abort(403)
     user_id = session["user_id"]
 
-    movies.add_movie(title, year, recommendation, user_id)
+    classes = []
+    genre = request.form["genre"]
+    if genre:
+        classes.append(("Genre", genre))
+
+    movies.add_movie(title, year, recommendation, user_id, classes)
     return redirect("/")
 
 

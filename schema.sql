@@ -11,3 +11,10 @@ CREATE TABLE movies (
     recommendation TEXT,
     user_id INTEGER REFERENCES users
 );
+
+CREATE TABLE movie_classes (
+    id INTEGER PRIMARY KEY,
+    movie_id INTEGER REFERENCES movies,
+    title TEXT,
+    value TEXT
+);

@@ -23,6 +23,16 @@
   <p>
     Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a>
   </p>
+  {% if classes %}
+  <p>
+    Genret:
+    <ul>
+    {% for genre in classes %}
+    <li>{{ genre.value }}</li>
+    {% endfor %}
+    </ul>
+  </p>
+  {% endif %}
   <p>
     <a href="/">Takaisin etusivulle</a>
   </p>
