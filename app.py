@@ -78,11 +78,17 @@ def create_movie():
         abort(403)
     user_id = session["user_id"]
 
+    all_classes = movies.get_all_classes()
+
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
-            parts = entry.split(":")
-            classes.append((parts[0], parts[1]))
+            entry_title, entry_value = entry.split(":")
+            if entry_title not in all_classes:
+                abort(403)
+            if entry_value not in all_classes[entry_title]:
+                abort(403)
+            classes.append((entry_title, entry_value))
 
     movies.add_movie(title, year, recommendation, user_id, classes)
     return redirect("/")
@@ -132,8 +138,12 @@ def update_movie():
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
-            parts = entry.split(":")
-            classes.append((parts[0], parts[1]))
+            entry_title, entry_value = entry.split(":")
+            if entry_title not in all_classes:
+                abort(403)
+            if entry_value not in all_classes[entry_title]:
+                abort(403)
+            classes.append((entry_title, entry_value))
 
     movies.update_movie(movie_id, title, year, recommendation, classes)
     return redirect("/movie/" + str(movie_id))
