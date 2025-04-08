@@ -20,25 +20,17 @@
       Suositusteksti: <br />
       <textarea name="recommendation" rows="8" cols="60" maxlength="1000" required></textarea>
     </p>
+    {% for class in classes %}
     <p>
-      Genre: <br />
-      <select name="genre">
+      {{ class }} <br />
+      <select name="classes">
         <option value="">(valitse)</option>
-        <option value="comedy">komedia</option>
-        <option value="drama">draama</option>
-        <option value="musical">musikaali</option>
-        <option value="fantasy">fantasia</option>
-        <option value="scifi">scifi</option>
-        <option value="romance">rakkaus</option>
-        <option value="horror">kauhu</option>
-        <option value="thriller">jännitys</option>
-        <option value="action">toiminta</option>
-        <option value="adventure">seikkailu</option>
-        <option value="crime">rikos</option>
-        <option value="documentary">dokumentti</option>
-        <option value="western">lännenelokuva</option>
+      {% for option in classes[class] %}
+        <option value="{{ class }}:{{ option }}">{{ option }}</option>
+      {% endfor %}
       </select>
     </p>
+    {% endfor %}
     <input type="submit" value="Luo suositus" />
   </form>
   <p>

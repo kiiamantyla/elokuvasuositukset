@@ -59,7 +59,8 @@ def show_movie(movie_id):
 @app.route("/new_movie")
 def new_movie():
     require_login()
-    return render_template("new_movie.html")
+    classes = movies.get_all_classes()
+    return render_template("new_movie.html", classes=classes)
 
 
 @app.route("/create_movie", methods=["POST"])
@@ -78,9 +79,10 @@ def create_movie():
     user_id = session["user_id"]
 
     classes = []
-    genre = request.form["genre"]
-    if genre:
-        classes.append(("Genre", genre))
+    for entry in request.form.getlist("classes"):
+        if entry:
+            parts = entry.split(":")
+            classes.append((parts[0], parts[1]))
 
     movies.add_movie(title, year, recommendation, user_id, classes)
     return redirect("/")

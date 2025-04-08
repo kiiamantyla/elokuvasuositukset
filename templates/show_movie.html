@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>{{ movie.title }}}</title>
+  <title>{{ movie.title }}</title>
 </head>
 
 <body>
@@ -25,10 +25,10 @@
   </p>
   {% if classes %}
   <p>
-    Genret:
+    Luokat:
     <ul>
-    {% for genre in classes %}
-    <li>{{ genre.value }}</li>
+    {% for class in classes %}
+    <li>{{ class.title }}: {{ class.value }}</li>
     {% endfor %}
     </ul>
   </p>
