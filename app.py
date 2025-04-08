@@ -97,7 +97,15 @@ def edit_movie(movie_id):
         abort(404)
     if movie["user_id"] != session["user_id"]:
         abort(403)
-    return render_template("edit_movie.html", movie=movie)
+
+    all_classes = movies.get_all_classes()
+    classes = {}
+    for my_class in all_classes:
+        classes[my_class] = ""
+    for entry in movies.get_classes(movie_id):
+        classes[entry["title"]] = entry["value"]
+
+    return render_template("edit_movie.html", movie=movie, classes=classes,  all_classes=all_classes)
 
 
 @app.route("/update_movie", methods=["POST"])
@@ -121,7 +129,13 @@ def update_movie():
     if not recommendation or len(recommendation) > 1000:
         abort(403)
 
-    movies.update_movie(movie_id, title, year, recommendation)
+    classes = []
+    for entry in request.form.getlist("classes"):
+        if entry:
+            parts = entry.split(":")
+            classes.append((parts[0], parts[1]))
+
+    movies.update_movie(movie_id, title, year, recommendation, classes)
     return redirect("/movie/" + str(movie_id))
 
 

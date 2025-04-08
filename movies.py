@@ -47,12 +47,19 @@ def get_movie(movie_id):
     return result[0] if result else None
 
 
-def update_movie(movie_id, title, year, recommendation):
+def update_movie(movie_id, title, year, recommendation, classes):
     sql = """UPDATE movies SET title = ?,
                                year = ?,
                                recommendation = ?
                            WHERE id = ?"""
     db.execute(sql, [title, year, recommendation, movie_id])
+
+    sql = "DELETE FROM movie_classes WHERE movie_id = ?"
+    db.execute(sql, [movie_id])
+
+    sql = "INSERT INTO movie_classes (movie_id, title, value) VALUES (?, ?, ?)"
+    for title, value in classes:
+        db.execute(sql, [movie_id, title, value])
 
 
 def remove_movie(movie_id):
