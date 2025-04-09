@@ -17,6 +17,10 @@
       <input type="text" name="year" size="5" value="{{ movie.year }}" pattern="[1-9][0-9]{0,3}" required />
     </p>
     <p>
+      Arvosana elokuvasta (1-10): <br />
+      <input type="text" name="grade" size="5" value="{{ movie.grade }}" pattern="[1-9]|10" required />
+    </p>
+    <p>
       Suositusteksti: <br />
       <textarea name="recommendation" rows="8" cols="60" maxlength="1000" required>{{ movie.recommendation }}</textarea>
     </p>

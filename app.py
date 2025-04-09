@@ -73,6 +73,9 @@ def create_movie():
     year = request.form["year"]
     if not re.search("^[1-9][0-9]{0,3}$", year):
         abort(403)
+    grade = request.form["grade"]
+    if not re.search("^[1-9]$|^10$", grade):
+        abort(403)
     recommendation = request.form["recommendation"]
     if not recommendation or len(recommendation) > 1000:
         abort(403)
@@ -90,7 +93,7 @@ def create_movie():
                 abort(403)
             classes.append((entry_title, entry_value))
 
-    movies.add_movie(title, year, recommendation, user_id, classes)
+    movies.add_movie(title, year, grade, recommendation, user_id, classes)
     return redirect("/")
 
 
@@ -131,10 +134,14 @@ def update_movie():
     year = request.form["year"]
     if not re.search("^[1-9][0-9]{0,3}$", year):
         abort(403)
+    grade = request.form["grade"]
+    if not re.search("^[1-9]$|^10$", grade):
+        abort(403)
     recommendation = request.form["recommendation"]
     if not recommendation or len(recommendation) > 1000:
         abort(403)
 
+    all_classes = movies.get_all_classes()
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
@@ -145,7 +152,7 @@ def update_movie():
                 abort(403)
             classes.append((entry_title, entry_value))
 
-    movies.update_movie(movie_id, title, year, recommendation, classes)
+    movies.update_movie(movie_id, title, year, grade, recommendation, classes)
     return redirect("/movie/" + str(movie_id))
 
 

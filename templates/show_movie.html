@@ -15,10 +15,14 @@
   </p>
   {% endif %}
   <p>
-    {{ movie.recommendation }}
+    Julkaisuvuosi: {{ movie.year }}
   </p>
   <p>
-    Julkaisuvuosi: {{ movie.year }}
+    Arvosana: {{ movie.grade }}
+  </p>
+  <p>
+    Suositus:
+    {{ movie.recommendation }}
   </p>
   <p>
     Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a>

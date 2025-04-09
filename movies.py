@@ -1,9 +1,9 @@
 import db
 
-def add_movie(title, year, recommendation, user_id, classes):
-    sql = """INSERT INTO movies (title, year, recommendation, user_id)
+def add_movie(title, year, grade, recommendation, user_id, classes):
+    sql = """INSERT INTO movies (title, year, grade, recommendation, user_id)
              VALUES (?, ?, ?, ?)"""
-    db.execute(sql, [title, year, recommendation, user_id])
+    db.execute(sql, [title, year, grade, recommendation, user_id])
 
     movie_id = db.last_insert_id()
 
@@ -38,6 +38,7 @@ def get_movie(movie_id):
     sql = """SELECT movies.id,
                     movies.title,
                     movies.year,
+                    movies.grade,
                     movies.recommendation,
                     users.id user_id,
                     users.username
@@ -47,12 +48,13 @@ def get_movie(movie_id):
     return result[0] if result else None
 
 
-def update_movie(movie_id, title, year, recommendation, classes):
+def update_movie(movie_id, title, year, grade, recommendation, classes):
     sql = """UPDATE movies SET title = ?,
                                year = ?,
+                               grade = ?,
                                recommendation = ?
                            WHERE id = ?"""
-    db.execute(sql, [title, year, recommendation, movie_id])
+    db.execute(sql, [title, year, grade, recommendation, movie_id])
 
     sql = "DELETE FROM movie_classes WHERE movie_id = ?"
     db.execute(sql, [movie_id])
