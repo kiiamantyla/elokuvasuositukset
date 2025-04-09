@@ -37,6 +37,22 @@
     </ul>
   </p>
   {% endif %}
+  <h2>Arvostelut</h2>
+  <ul>
+    {% for review in reviews %}
+    <li>{{ review.grade }}, {{ review.review }}<br />
+    <a href="/user/{{ review.user_id }}">{{ review.username }}</a></li>
+    {% endfor %}
+  </ul>
+  <h3>Uusi arvostelu</h3>
+  <form action="/create_review" method="post">
+    Arvostelu: <br />
+      <textarea name="review" rows="8" cols="60" maxlength="1000" required></textarea><br />
+    Arvosana elokuvasta (1-10):
+    <input type="text" name="grade" size="1" pattern="[1-9]|10" required /><br />
+    <input type="hidden" name="movie_id" value="{{ movie.id }}" />
+    <input type="submit" value="Lisää arvostelu">
+  </form>
   <p>
     <a href="/">Takaisin etusivulle</a>
   </p>

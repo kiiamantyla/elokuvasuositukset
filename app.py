@@ -27,6 +27,28 @@ def index():
     return render_template("index.html", movies=all_movies)
 
 
+@app.route("/create_review", methods=["POST"])
+def create_review():
+    require_login()
+
+    grade = request.form["grade"]
+    if not re.search("^[1-9]$|^10$", grade):
+        abort(403)
+    review = request.form["review"]
+    if not review or len(review) > 1000:
+        abort(403)
+
+    movie_id = request.form["movie_id"]
+    movie = movies.get_movie(movie_id)
+    if not movie:
+        abort(403)
+
+    user_id = session["user_id"]
+
+    movies.add_review(movie_id, user_id, grade, review)
+    return redirect("/movie/" + str(movie_id))
+
+
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
     user = users.get_user(user_id)
@@ -53,7 +75,8 @@ def show_movie(movie_id):
     if not movie:
         abort(404)
     classes = movies.get_classes(movie_id)
-    return render_template("show_movie.html",movie=movie, classes=classes)
+    reviews = movies.get_reviews(movie_id)
+    return render_template("show_movie.html",movie=movie, classes=classes, reviews=reviews)
 
 
 @app.route("/new_movie")

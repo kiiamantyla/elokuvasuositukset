@@ -12,6 +12,23 @@ def add_movie(title, year, grade, recommendation, user_id, classes):
         db.execute(sql, [movie_id, title, value])
 
 
+def add_review(movie_id, user_id, grade, review):
+    sql = """INSERT INTO reviews (movie_id, user_id, grade, review)
+             VALUES (?, ?, ?, ?)"""
+    db.execute(sql, [movie_id, user_id, grade, review])
+
+
+def get_reviews(movie_id):
+    sql = """SELECT reviews.review,
+                    reviews.grade,
+                    reviews.user_id,
+                    users.username
+             FROM reviews, users
+             WHERE reviews.movie_id = ? AND reviews.user_id = users.id
+             ORDER BY reviews.id DESC"""
+    return db.query(sql, [movie_id])
+
+
 def get_all_classes():
     sql = "SELECT title, value FROM classes ORDER BY id"
     result = db.query(sql)
