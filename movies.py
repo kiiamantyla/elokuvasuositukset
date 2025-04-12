@@ -2,7 +2,7 @@ import db
 
 def add_movie(title, year, grade, recommendation, user_id, classes):
     sql = """INSERT INTO movies (title, year, grade, recommendation, user_id)
-             VALUES (?, ?, ?, ?)"""
+             VALUES (?, ?, ?, ?, ?)"""
     db.execute(sql, [title, year, grade, recommendation, user_id])
 
     movie_id = db.last_insert_id()

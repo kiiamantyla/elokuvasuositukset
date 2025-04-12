@@ -47,7 +47,7 @@
   <h3>Uusi arvostelu</h3>
   <form action="/create_review" method="post">
     Arvostelu: <br />
-      <textarea name="review" rows="8" cols="60" maxlength="1000" required></textarea><br />
+      <textarea name="review" rows="8" cols="60" maxlength="500" required></textarea><br />
     Arvosana elokuvasta (1-10):
     <input type="text" name="grade" size="1" pattern="[1-9]|10" required /><br />
     <input type="hidden" name="movie_id" value="{{ movie.id }}" />

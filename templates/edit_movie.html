@@ -22,7 +22,7 @@
     </p>
     <p>
       Suositusteksti: <br />
-      <textarea name="recommendation" rows="8" cols="60" maxlength="1000" required>{{ movie.recommendation }}</textarea>
+      <textarea name="recommendation" rows="8" cols="60" maxlength="500" required>{{ movie.recommendation }}</textarea>
     </p>
     <input type="hidden" name="movie_id" value="{{ movie.id }}" />
     {% for class in all_classes %}

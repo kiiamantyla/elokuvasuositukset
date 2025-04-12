@@ -100,7 +100,7 @@ def create_movie():
     if not re.search("^[1-9]$|^10$", grade):
         abort(403)
     recommendation = request.form["recommendation"]
-    if not recommendation or len(recommendation) > 1000:
+    if not recommendation or len(recommendation) > 500:
         abort(403)
     user_id = session["user_id"]
 
