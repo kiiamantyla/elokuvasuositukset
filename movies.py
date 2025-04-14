@@ -6,10 +6,12 @@ def add_movie(title, year, grade, recommendation, user_id, classes):
     db.execute(sql, [title, year, grade, recommendation, user_id])
 
     movie_id = db.last_insert_id()
-
-    sql = "INSERT INTO movie_classes (movie_id, title, value) VALUES (?, ?, ?)"
-    for title, value in classes:
-        db.execute(sql, [movie_id, title, value])
+    sql = "INSERT INTO movie_classes (movie_id, class_id) VALUES (?, ?)"
+    for class_title, class_value in classes:
+        class_id = get_class_id(class_title, class_value)
+        if class_id:
+            db.execute(sql, [movie_id, class_id])
+    return movie_id
 
 
 def add_review(movie_id, user_id, grade, review):
@@ -29,6 +31,12 @@ def get_reviews(movie_id):
     return db.query(sql, [movie_id])
 
 
+def get_class_id(title, value):
+    sql = "SELECT id FROM classes WHERE title = ? AND value = ?"
+    result = db.query(sql, [title, value])
+    return result[0]["id"] if result else None
+
+
 def get_all_classes():
     sql = "SELECT title, value FROM classes ORDER BY id"
     result = db.query(sql)
@@ -41,8 +49,11 @@ def get_all_classes():
     return classes
 
 
-def get_classes(movie_id):
-    sql = "SELECT title, value FROM movie_classes WHERE movie_id = ?"
+def get_movie_classes(movie_id):
+    sql = """SELECT classes.title, classes.value
+             FROM movie_classes
+             JOIN classes ON movie_classes.class_id = classes.id
+             WHERE movie_classes.movie_id = ?"""
     return db.query(sql, [movie_id])
 
 
@@ -76,9 +87,11 @@ def update_movie(movie_id, title, year, grade, recommendation, classes):
     sql = "DELETE FROM movie_classes WHERE movie_id = ?"
     db.execute(sql, [movie_id])
 
-    sql = "INSERT INTO movie_classes (movie_id, title, value) VALUES (?, ?, ?)"
-    for title, value in classes:
-        db.execute(sql, [movie_id, title, value])
+    sql = "INSERT INTO movie_classes (movie_id, class_id) VALUES (?, ?)"
+    for class_title, class_value in classes:
+        class_id = get_class_id(class_title, class_value)
+        if class_id:
+            db.execute(sql, [movie_id, class_id])
 
 
 def remove_movie(movie_id):

@@ -25,22 +25,37 @@
       <textarea name="recommendation" rows="8" cols="60" maxlength="500" required>{{ movie.recommendation }}</textarea>
     </p>
     <input type="hidden" name="movie_id" value="{{ movie.id }}" />
-    {% for class in all_classes %}
+
     <p>
-      {{ class }} <br />
-      <select name="classes">
-        <option value="">(valitse)</option>
-      {% for option in all_classes[class] %}
-        {% if classes[class] == option %}
-        <option value="{{ class }}:{{ option }}" selected>{{ option }}</option>
+      Genret:
+    <select name="genres" multiple>
+      <option value="">(valitse)</option>
+      {% for genre in all_genres %}
+        {% if genre in genres %}
+          <option value="genre:{{ genre }}" selected>{{ genre }}</option>
         {% else %}
-        <option value="{{ class }}:{{ option }}">{{ option }}</option>
+          <option value="genre:{{ genre }}">{{ genre }}</option>
         {% endif %}
       {% endfor %}
-      </select>
+    </select>
+    <p>(Pidä Ctrl(Windows)/Cmd(Mac) pohjassa valitaksesi useita vaihtoehtoja)</p>
     </p>
-    {% endfor %}
-    <input type="submit" value="Päivitä suositusta" />
+
+    <p>
+      Ikäraja:
+    <select name="age_limit">
+      <option value="">(valitse)</option>
+      {% for age_limit in all_age_limits %}
+        {% if age_limit in age_limits %}
+          <option value="ikäraja:{{ age_limit }}" selected>{{ age_limit }}</option>
+        {% else %}
+          <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    </p>
+
+    <input type="submit" value="Tallenna muutokset" />
   </form>
   <p>
     <a href="/">Takaisin etusivulle</a>

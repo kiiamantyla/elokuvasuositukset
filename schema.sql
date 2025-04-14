@@ -30,6 +30,6 @@ CREATE TABLE classes (
 CREATE TABLE movie_classes (
     id INTEGER PRIMARY KEY,
     movie_id INTEGER REFERENCES movies,
-    title TEXT,
-    value TEXT
+    class_id INTEGER REFERENCES classes,
+    UNIQUE(movie_id, class_id)
 );

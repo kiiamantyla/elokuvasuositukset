@@ -10,8 +10,8 @@
 
   {% if session.user_id == movie.user_id %}
   <p>
-    <a href="/edit_movie/{{ movie.id }}">Muokkaa<a/>
-    <a href="/remove_movie/{{ movie.id }}">Poista<a/>
+    <a href="/edit_movie/{{ movie.id }}">Muokkaa</a>
+    <a href="/remove_movie/{{ movie.id }}">Poista</a>
   </p>
   {% endif %}
   <p>
@@ -27,16 +27,18 @@
   <p>
     Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a>
   </p>
-  {% if classes %}
-  <p>
-    Luokat:
-    <ul>
-    {% for class in classes %}
-    <li>{{ class.title }}: {{ class.value }}</li>
+
+  <p>Genret:</p>
+  <ul>
+    {% for genre in genres %}
+    <li>{{ genre.value }}</li>
     {% endfor %}
-    </ul>
+  </ul>
+
+  <p>
+    Ikäraja: {{ age_limit.value }}
   </p>
-  {% endif %}
+
   <h2>Arvostelut</h2>
   <ul>
     {% for review in reviews %}

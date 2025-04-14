@@ -74,16 +74,28 @@ def show_movie(movie_id):
     movie = movies.get_movie(movie_id)
     if not movie:
         abort(404)
-    classes = movies.get_classes(movie_id)
+    classes = movies.get_movie_classes(movie_id)
+    genres = []
+    age_limit = None
+
+    for class_item in classes:
+        if class_item["title"] == "genre":
+            genres.append(class_item)
+        elif class_item["title"] == "ikäraja":
+            age_limit = class_item
+
+    all_classes = movies.get_all_classes()
     reviews = movies.get_reviews(movie_id)
-    return render_template("show_movie.html",movie=movie, classes=classes, reviews=reviews)
+    return render_template("show_movie.html", movie=movie, genres=genres, age_limit=age_limit, all_classes=all_classes, reviews=reviews)
 
 
 @app.route("/new_movie")
 def new_movie():
     require_login()
     classes = movies.get_all_classes()
-    return render_template("new_movie.html", classes=classes)
+    genres = classes.get("genre", [])
+    age_limits = classes.get("ikäraja", [])
+    return render_template("new_movie.html", genres=genres, age_limits=age_limits)
 
 
 @app.route("/create_movie", methods=["POST"])
@@ -105,18 +117,42 @@ def create_movie():
     user_id = session["user_id"]
 
     all_classes = movies.get_all_classes()
+    selected_classes = []
 
-    classes = []
-    for entry in request.form.getlist("classes"):
-        if entry:
-            entry_title, entry_value = entry.split(":")
-            if entry_title not in all_classes:
-                abort(403)
-            if entry_value not in all_classes[entry_title]:
-                abort(403)
-            classes.append((entry_title, entry_value))
+    selected_genres = request.form.getlist("genres")
 
-    movies.add_movie(title, year, grade, recommendation, user_id, classes)
+    if "" in selected_genres and len(selected_genres) > 1:
+        abort(403)
+
+    for genre in selected_genres:
+        if genre:
+            try:
+                class_title, class_value = genre.split(":")
+            except ValueError:
+                abort(403)
+            class_title, class_value = genre.split(":")
+            if class_title not in all_classes:
+                abort(403)
+            if class_value not in all_classes[class_title]:
+                abort(403)
+            if class_title == "genre" and class_value in all_classes["genre"]:
+                selected_classes.append((class_title, class_value))
+
+    age_limit = request.form.get("age_limit")
+    if age_limit:
+        try:
+            class_title, class_value = age_limit.split(":")
+        except ValueError:
+            abort(403)
+        if class_title not in all_classes:
+            abort(403)
+        if class_value not in all_classes[class_title]:
+            abort(403)
+        if class_title == "ikäraja" and class_value in all_classes["ikäraja"]:
+            selected_classes.append((class_title, class_value))
+
+    movie_id = movies.add_movie(title, year, grade, recommendation, user_id, selected_classes)
+
     return redirect("/")
 
 
@@ -130,14 +166,15 @@ def edit_movie(movie_id):
     if movie["user_id"] != session["user_id"]:
         abort(403)
 
+    classes = movies.get_movie_classes(movie_id)
     all_classes = movies.get_all_classes()
-    classes = {}
-    for my_class in all_classes:
-        classes[my_class] = ""
-    for entry in movies.get_classes(movie_id):
-        classes[entry["title"]] = entry["value"]
 
-    return render_template("edit_movie.html", movie=movie, classes=classes,  all_classes=all_classes)
+    genres = [class_item["value"] for class_item in classes if class_item["title"] == "genre"]
+    age_limits = [class_item["value"] for class_item in classes if class_item["title"] == "ikäraja"]
+
+    all_genres = all_classes.get("genre", [])
+    all_age_limits = all_classes.get("ikäraja", [])
+    return render_template("edit_movie.html", movie=movie, genres=genres, age_limits=age_limits, all_genres=all_genres, all_age_limits=all_age_limits)
 
 
 @app.route("/update_movie", methods=["POST"])
@@ -165,17 +202,40 @@ def update_movie():
         abort(403)
 
     all_classes = movies.get_all_classes()
-    classes = []
-    for entry in request.form.getlist("classes"):
-        if entry:
-            entry_title, entry_value = entry.split(":")
-            if entry_title not in all_classes:
-                abort(403)
-            if entry_value not in all_classes[entry_title]:
-                abort(403)
-            classes.append((entry_title, entry_value))
+    selected_classes = []
 
-    movies.update_movie(movie_id, title, year, grade, recommendation, classes)
+    selected_genres = request.form.getlist("genres")
+
+    if "" in selected_genres and len(selected_genres) > 1:
+        abort(403)
+
+    for genre in selected_genres:
+        if genre:
+            try:
+                class_title, class_value = genre.split(":")
+            except ValueError:
+                abort(403)
+            if class_title not in all_classes:
+                abort(403)
+            if class_value not in all_classes[class_title]:
+                abort(403)
+            if class_title == "genre" and class_value in all_classes["genre"]:
+                selected_classes.append((class_title, class_value))
+
+    age_limit = request.form.get("age_limit")
+    if age_limit:
+        try:
+            class_title, class_value = age_limit.split(":")
+        except ValueError:
+            abort(403)class_title, class_value = age_limit.split(":")
+        if class_title not in all_classes:
+            abort(403)
+        if class_value not in all_classes[class_title]:
+            abort(403)
+        if class_title == "ikäraja" and class_value in all_classes["ikäraja"]:
+            selected_classes.append((class_title, class_value))
+
+    movies.update_movie(movie_id, title, year, grade, recommendation, selected_classes)
     return redirect("/movie/" + str(movie_id))
 
 

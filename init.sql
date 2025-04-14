@@ -1,13 +1,13 @@
 DELETE FROM classes;
 
-INSERT INTO classes (title, value) VALUES ('Genre', 'comedy');
-INSERT INTO classes (title, value) VALUES ('Genre', 'drama');
-INSERT INTO classes (title, value) VALUES ('Genre', 'horror');
-INSERT INTO classes (title, value) VALUES ('Genre', 'fantasy');
-INSERT INTO classes (title, value) VALUES ('Genre', 'action');
+INSERT INTO classes (title, value) VALUES ('genre', 'comedy');
+INSERT INTO classes (title, value) VALUES ('genre', 'drama');
+INSERT INTO classes (title, value) VALUES ('genre', 'horror');
+INSERT INTO classes (title, value) VALUES ('genre', 'fantasy');
+INSERT INTO classes (title, value) VALUES ('genre', 'action');
 
-INSERT INTO classes (title, value) VALUES ('Ikäraja', 'S');
-INSERT INTO classes (title, value) VALUES ('Ikäraja', 'K7');
-INSERT INTO classes (title, value) VALUES ('Ikäraja', 'K12');
-INSERT INTO classes (title, value) VALUES ('Ikäraja', 'K16');
-INSERT INTO classes (title, value) VALUES ('Ikäraja', 'K18');
+INSERT INTO classes (title, value) VALUES ('ikäraja', 'S');
+INSERT INTO classes (title, value) VALUES ('ikäraja', 'K7');
+INSERT INTO classes (title, value) VALUES ('ikäraja', 'K12');
+INSERT INTO classes (title, value) VALUES ('ikäraja', 'K16');
+INSERT INTO classes (title, value) VALUES ('ikäraja', 'K18');

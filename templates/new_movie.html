@@ -24,17 +24,28 @@
       Suositusteksti: <br />
       <textarea name="recommendation" rows="8" cols="60" maxlength="500" required></textarea>
     </p>
-    {% for class in classes %}
+
     <p>
-      {{ class }} <br />
-      <select name="classes">
-        <option value="">(valitse)</option>
-      {% for option in classes[class] %}
-        <option value="{{ class }}:{{ option }}">{{ option }}</option>
+      Genret:
+    <select name="genres" multiple>
+      <option value="">(valitse)</option>
+      {% for genre in genres %}
+        <option value="genre:{{ genre }}">{{ genre }}</option>
       {% endfor %}
-      </select>
+    </select>
+    <p>(Pidä Ctrl(Windows)/Cmd(Mac) pohjassa valitaksesi useita vaihtoehtoja)</p>
     </p>
-    {% endfor %}
+
+    <p>
+      Ikäraja:
+    <select name="age_limit">
+      <option value="">(valitse)</option>
+      {% for age_limit in age_limits %}
+        <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
+      {% endfor %}
+    </select>
+    </p>
+
     <input type="submit" value="Luo suositus" />
   </form>
   <p>
