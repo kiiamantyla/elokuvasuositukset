@@ -12,8 +12,14 @@
   <p>
     <a href="/edit_movie/{{ movie.id }}">Muokkaa</a>
     <a href="/remove_movie/{{ movie.id }}">Poista</a>
+    <a href="/images/{{ movie.id }}">Kuvat</a>
   </p>
   {% endif %}
+
+  {% for poster in posters %}
+    <img src="/poster/{{ poster.id }}"/>
+  {% endfor %}
+
   <p>
     Julkaisuvuosi: {{ movie.year }}
   </p>
@@ -38,6 +44,11 @@
   <p>
     Ikäraja: {{ age_limit.value }}
   </p>
+
+  <p>Kuvat:</p>
+  {% for image in images %}
+    <img src="/image/{{ image.id }}"/>
+  {% endfor %}
 
   <h2>Arvostelut</h2>
   <ul>

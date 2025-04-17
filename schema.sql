@@ -33,3 +33,15 @@ CREATE TABLE movie_classes (
     class_id INTEGER REFERENCES classes,
     UNIQUE(movie_id, class_id)
 );
+
+CREATE TABLE images (
+    id INTEGER PRIMARY KEY,
+    movie_id INTEGER REFERENCES movies,
+    image BLOB
+);
+
+CREATE TABLE posters (
+    id INTEGER PRIMARY KEY,
+    movie_id INTEGER REFERENCES movies,
+    poster BLOB
+);

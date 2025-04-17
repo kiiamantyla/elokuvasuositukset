@@ -2,7 +2,7 @@ import sqlite3
 import re
 
 from flask import Flask
-from flask import abort, redirect, render_template, request, session
+from flask import abort, make_response, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import config
@@ -25,6 +25,81 @@ def require_login():
 def index():
     all_movies = movies.get_movies()
     return render_template("index.html", movies=all_movies)
+
+
+@app.route("/images/<int:movie_id>")
+def edit_images(movie_id):
+    require_login()
+
+    movie = movies.get_movie(movie_id)
+    if not movie:
+        abort(404)
+    if movie["user_id"] != session["user_id"]:
+        abort(403)
+
+    images = movies.get_images(movie_id)
+    poster = movies.get_posters(movie_id)
+
+    return render_template("images.html", movie=movie, images=images)
+
+
+@app.route("/add_image", methods=["POST"])
+def add_image():
+    require_login()
+
+    movie_id = request.form["movie_id"]
+    movie = movies.get_movie(movie_id)
+    if not movie:
+        abort(404)
+    if movie["user_id"] != session["user_id"]:
+        abort(403)
+
+    poster = request.files["poster"]
+    if poster:
+        if not poster.filename.endswith(".jpg"):
+            return "VIRHE: väärä tiedostomuoto"
+
+        image = poster.read()
+        if len(image) > 100 * 1024:
+            return "VIRHE: liian suuri kuva"
+
+        movies.add_poster(movie_id, image)
+
+
+    image_file = request.files["image"]
+    if image_file:
+        if not image_file.filename.endswith(".jpg"):
+            return "VIRHE: väärä tiedostomuoto"
+
+        image = image_file.read()
+        if len(image) > 100 * 1024:
+            return "VIRHE: liian suuri kuva"
+
+        movies.add_image(movie_id, image)
+
+    return redirect("/images/" + str(movie_id))
+
+
+@app.route("/image/<int:image_id>")
+def show_image(image_id):
+    image = movies.get_image(image_id)
+    if not image:
+        abort(404)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response
+
+
+@app.route("/poster/<int:poster_id>")
+def show_poster(poster_id):
+    poster = movies.get_poster(poster_id)
+    if not poster:
+        abort(404)
+
+    response = make_response(bytes(poster))
+    response.headers.set("Content-Type", "poster/jpeg")
+    return response
 
 
 @app.route("/create_review", methods=["POST"])
@@ -86,7 +161,9 @@ def show_movie(movie_id):
 
     all_classes = movies.get_all_classes()
     reviews = movies.get_reviews(movie_id)
-    return render_template("show_movie.html", movie=movie, genres=genres, age_limit=age_limit, all_classes=all_classes, reviews=reviews)
+    images = movies.get_images(movie_id)
+    posters = movies.get_posters(movie_id)
+    return render_template("show_movie.html", movie=movie, genres=genres, age_limit=age_limit, all_classes=all_classes, reviews=reviews, images=images, posters=posters)
 
 
 @app.route("/new_movie")
@@ -227,7 +304,7 @@ def update_movie():
         try:
             class_title, class_value = age_limit.split(":")
         except ValueError:
-            abort(403)class_title, class_value = age_limit.split(":")
+            abort(403)
         if class_title not in all_classes:
             abort(403)
         if class_value not in all_classes[class_title]:
