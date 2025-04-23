@@ -18,37 +18,25 @@
   <img src="/poster/{{ poster.id }}"/>
 {% endfor %}
 
-<p>
-  Julkaisuvuosi: {{ movie.year }}
-</p>
-<p>
-  Arvosana: {{ movie.grade }}
-</p>
-<p>
-  Suositus:
-  {{ movie.recommendation }}
-</p>
-<p>
-  Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a>
-</p>
-
+<p>Julkaisuvuosi: {{ movie.year }}</p>
+<p>Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a></p>
 {% if genres %}
-  <p>Genret:</p>
-  <ul>
+  <p>Genret:
     {% for genre in genres %}
-    <li>{{ genre.value }}</li>
+      {{ genre.value }}{% if not loop.last %}, {% endif %}
     {% endfor %}
-  </ul>
+  </p>
 {% endif %}
-
 {% if age_limit %}
   <p>
     Ikäraja: {{ age_limit.value }}
   </p>
 {% endif %}
+<p>Arvosana: {{ movie.grade }}</p>
+<p>Arvostelu: {{ movie.recommendation }}</p>
 
 {% if images %}
-  <p>Kuvat:</p>
+  <p>Kuvia:</p>
   {% for image in images %}
     <img src="/image/{{ image.id }}"/>
   {% endfor %}
@@ -66,13 +54,15 @@
   <p>Ei vielä muita arvosteluja.</p>
 {% endif %}
 
-<h3>Uusi arvostelu</h3>
-<form action="/create_review" method="post">
-  Arvostelu: <br />
-    <textarea name="review" rows="8" cols="60" maxlength="500" required></textarea><br />
-  Arvosana elokuvasta (1-10):
-  <input type="text" name="grade" size="1" pattern="[1-9]|10" required /><br />
-  <input type="hidden" name="movie_id" value="{{ movie.id }}" />
-  <input type="submit" value="Lisää arvostelu">
-</form>
+{% if session.user_id %}
+  <h3>Uusi arvostelu</h3>
+  <form action="/create_review" method="post">
+    Arvostelu: <br />
+      <textarea name="review" rows="8" cols="60" maxlength="500" required></textarea><br />
+    Arvosana elokuvasta (1-10):
+    <input type="text" name="grade" size="1" pattern="[1-9]|10" required /><br />
+    <input type="hidden" name="movie_id" value="{{ movie.id }}" />
+    <input type="submit" value="Lisää arvostelu">
+  </form>
+{% endif %}
 {% endblock %}
