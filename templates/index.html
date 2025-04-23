@@ -6,9 +6,11 @@
 {% block content %}
 <h2>Elokuvat</h2>
 
-<ul>
-  {% for movie in movies %}
-  <li><a href="/movie/{{ movie.id }}">{{ movie.title }}</a></li>
-  {% endfor %}
-</ul>
+{% for movie in movies %}
+<div class="movie">
+<a href="/movie/{{ movie.id }}">{{ movie.title }}</a>
+Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a> <br />
+Arvostelujen määrä: {{ movie.review_count }} <br />
+</div>
+{% endfor %}
 {% endblock %}
