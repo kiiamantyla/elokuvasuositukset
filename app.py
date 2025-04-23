@@ -252,7 +252,7 @@ def create_movie():
 
     movie_id = movies.add_movie(title, year, grade, recommendation, user_id, selected_classes)
 
-    return redirect("/")
+    return redirect("/movie/" + str(movie_id))
 
 
 @app.route("/edit_movie/<int:movie_id>")
