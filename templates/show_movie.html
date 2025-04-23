@@ -34,29 +34,39 @@
     Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a>
   </p>
 
-  <p>Genret:</p>
-  <ul>
-    {% for genre in genres %}
-    <li>{{ genre.value }}</li>
+  {% if genres %}
+    <p>Genret:</p>
+    <ul>
+      {% for genre in genres %}
+      <li>{{ genre.value }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if age_limit %}
+    <p>
+      Ikäraja: {{ age_limit.value }}
+    </p>
+  {% endif %}
+
+  {% if images %}
+    <p>Kuvat:</p>
+    {% for image in images %}
+      <img src="/image/{{ image.id }}"/>
     {% endfor %}
-  </ul>
-
-  <p>
-    Ikäraja: {{ age_limit.value }}
-  </p>
-
-  <p>Kuvat:</p>
-  {% for image in images %}
-    <img src="/image/{{ image.id }}"/>
-  {% endfor %}
+  {% endif %}
 
   <h2>Arvostelut</h2>
-  <ul>
-    {% for review in reviews %}
-    <li>{{ review.grade }}, {{ review.review }}<br />
-    <a href="/user/{{ review.user_id }}">{{ review.username }}</a></li>
-    {% endfor %}
-  </ul>
+  {% if reviews %}
+    <ul>
+      {% for review in reviews %}
+      <li>{{ review.grade }}, {{ review.review }}<br />
+      <a href="/user/{{ review.user_id }}">{{ review.username }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Ei vielä muita arvosteluja.</p>
+  {% endif %}
   <h3>Uusi arvostelu</h3>
   <form action="/create_review" method="post">
     Arvostelu: <br />
