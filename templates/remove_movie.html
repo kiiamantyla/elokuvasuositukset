@@ -1,18 +1,14 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Elokuvan poisto</title>
-</head>
+{% block title %}Elokuvan poisto{% endblock %}
 
-<body>
-  <h1>Elokuvan poisto</h1>
-  <p>Elokuva: {{ movie.title }}</p>
-  <p>Haluatko varmasti poistaa tämän elokuvan?</p>
-  <form action="/remove_movie/{{ movie.id }}" method="post">
-    <input type="submit" name="remove" value="Poista elokuva">
-    <input type="submit" name="back" value="Palaa takaisin">
-  </form>
-</body>
 
-</html>
+{% block content %}
+<h2>Elokuvan poisto</h2>
+<p>Elokuva: {{ movie.title }}</p>
+<p>Haluatko varmasti poistaa tämän elokuvan?</p>
+<form action="/remove_movie/{{ movie.id }}" method="post">
+  <input type="submit" name="remove" value="Poista elokuva">
+  <input type="submit" name="back" value="Palaa takaisin">
+</form>
+{% endblock %}

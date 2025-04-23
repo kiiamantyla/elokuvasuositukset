@@ -1,65 +1,58 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Elokuvan muokkaus</title>
-</head>
+{% block title %}Elokuvan muokkaus{% endblock %}
 
-<body>
-  <h1>Elokuvan muokkaus</h1>
-  <form action="/update_movie" method="post">
-    <p>
-      Elokuvan nimi: <br />
-      <input type="text" name="title" value="{{ movie.title }}" maxlength="90" required />
-    </p>
-    <p>
-      Elokuvan julkaisuvuosi: <br />
-      <input type="text" name="year" size="5" value="{{ movie.year }}" pattern="[1-9][0-9]{0,3}" required />
-    </p>
-    <p>
-      Arvosana elokuvasta (1-10): <br />
-      <input type="text" name="grade" size="1" value="{{ movie.grade }}" pattern="[1-9]|10" required />
-    </p>
-    <p>
-      Suositusteksti: <br />
-      <textarea name="recommendation" rows="8" cols="60" maxlength="500" required>{{ movie.recommendation }}</textarea>
-    </p>
-    <input type="hidden" name="movie_id" value="{{ movie.id }}" />
 
-    <p>
-      Genret:
-    <select name="genres" multiple>
-      <option value="">(valitse)</option>
-      {% for genre in all_genres %}
-        {% if genre in genres %}
-          <option value="genre:{{ genre }}" selected>{{ genre }}</option>
-        {% else %}
-          <option value="genre:{{ genre }}">{{ genre }}</option>
-        {% endif %}
-      {% endfor %}
-    </select>
-    <p>(Pidä Ctrl(Windows)/Cmd(Mac) pohjassa valitaksesi useita vaihtoehtoja)</p>
-    </p>
-
-    <p>
-      Ikäraja:
-    <select name="age_limit">
-      <option value="">(valitse)</option>
-      {% for age_limit in all_age_limits %}
-        {% if age_limit in age_limits %}
-          <option value="ikäraja:{{ age_limit }}" selected>{{ age_limit }}</option>
-        {% else %}
-          <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
-        {% endif %}
-      {% endfor %}
-    </select>
-    </p>
-
-    <input type="submit" value="Tallenna muutokset" />
-  </form>
+{% block content %}
+<h2>Elokuvan muokkaus</h2>
+<form action="/update_movie" method="post">
   <p>
-    <a href="/">Takaisin etusivulle</a>
+    Elokuvan nimi: <br />
+    <input type="text" name="title" value="{{ movie.title }}" maxlength="90" required />
   </p>
-</body>
+  <p>
+    Elokuvan julkaisuvuosi: <br />
+    <input type="text" name="year" size="5" value="{{ movie.year }}" pattern="[1-9][0-9]{0,3}" required />
+  </p>
+  <p>
+    Arvosana elokuvasta (1-10): <br />
+    <input type="text" name="grade" size="1" value="{{ movie.grade }}" pattern="[1-9]|10" required />
+  </p>
+  <p>
+    Suositusteksti: <br />
+    <textarea name="recommendation" rows="8" cols="60" maxlength="500" required>{{ movie.recommendation }}</textarea>
+  </p>
+  <input type="hidden" name="movie_id" value="{{ movie.id }}" />
 
-</html>
+  <p>
+    Genret:
+  <select name="genres" multiple>
+    <option value="">(valitse)</option>
+    {% for genre in all_genres %}
+      {% if genre in genres %}
+        <option value="genre:{{ genre }}" selected>{{ genre }}</option>
+      {% else %}
+        <option value="genre:{{ genre }}">{{ genre }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+  <p>(Pidä Ctrl(Windows)/Cmd(Mac) pohjassa valitaksesi useita vaihtoehtoja)</p>
+  </p>
+
+  <p>
+    Ikäraja:
+  <select name="age_limit">
+    <option value="">(valitse)</option>
+    {% for age_limit in all_age_limits %}
+      {% if age_limit in age_limits %}
+        <option value="ikäraja:{{ age_limit }}" selected>{{ age_limit }}</option>
+      {% else %}
+        <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+  </p>
+
+  <input type="submit" value="Tallenna muutokset" />
+</form>
+{% endblock %}

@@ -1,84 +1,78 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>{{ movie.title }}</title>
-</head>
+{% block title %}{{ movie.title }}{% endblock %}
 
-<body>
-  <h1>{{ movie.title }}</h1>
 
-  {% if session.user_id == movie.user_id %}
-  <p>
-    <a href="/edit_movie/{{ movie.id }}">Muokkaa</a>
-    <a href="/remove_movie/{{ movie.id }}">Poista</a>
-    <a href="/images/{{ movie.id }}">Kuvat</a>
-  </p>
-  {% endif %}
+{% block content %}
+<h2>{{ movie.title }}</h2>
 
-  {% for poster in posters %}
-    <img src="/poster/{{ poster.id }}"/>
-  {% endfor %}
+{% if session.user_id == movie.user_id %}
+<p>
+  <a href="/edit_movie/{{ movie.id }}">Muokkaa</a>
+  <a href="/remove_movie/{{ movie.id }}">Poista</a>
+  <a href="/images/{{ movie.id }}">Kuvat</a>
+</p>
+{% endif %}
 
-  <p>
-    Julkaisuvuosi: {{ movie.year }}
-  </p>
-  <p>
-    Arvosana: {{ movie.grade }}
-  </p>
-  <p>
-    Suositus:
-    {{ movie.recommendation }}
-  </p>
-  <p>
-    Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a>
-  </p>
+{% for poster in posters %}
+  <img src="/poster/{{ poster.id }}"/>
+{% endfor %}
 
-  {% if genres %}
-    <p>Genret:</p>
-    <ul>
-      {% for genre in genres %}
-      <li>{{ genre.value }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+<p>
+  Julkaisuvuosi: {{ movie.year }}
+</p>
+<p>
+  Arvosana: {{ movie.grade }}
+</p>
+<p>
+  Suositus:
+  {{ movie.recommendation }}
+</p>
+<p>
+  Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a>
+</p>
 
-  {% if age_limit %}
-    <p>
-      Ikäraja: {{ age_limit.value }}
-    </p>
-  {% endif %}
-
-  {% if images %}
-    <p>Kuvat:</p>
-    {% for image in images %}
-      <img src="/image/{{ image.id }}"/>
+{% if genres %}
+  <p>Genret:</p>
+  <ul>
+    {% for genre in genres %}
+    <li>{{ genre.value }}</li>
     {% endfor %}
-  {% endif %}
+  </ul>
+{% endif %}
 
-  <h2>Arvostelut</h2>
-  {% if reviews %}
-    <ul>
-      {% for review in reviews %}
-      <li>{{ review.grade }}, {{ review.review }}<br />
-      <a href="/user/{{ review.user_id }}">{{ review.username }}</a></li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Ei vielä muita arvosteluja.</p>
-  {% endif %}
-  <h3>Uusi arvostelu</h3>
-  <form action="/create_review" method="post">
-    Arvostelu: <br />
-      <textarea name="review" rows="8" cols="60" maxlength="500" required></textarea><br />
-    Arvosana elokuvasta (1-10):
-    <input type="text" name="grade" size="1" pattern="[1-9]|10" required /><br />
-    <input type="hidden" name="movie_id" value="{{ movie.id }}" />
-    <input type="submit" value="Lisää arvostelu">
-  </form>
+{% if age_limit %}
   <p>
-    <a href="/">Takaisin etusivulle</a>
+    Ikäraja: {{ age_limit.value }}
   </p>
-</body>
+{% endif %}
 
-</html>
+{% if images %}
+  <p>Kuvat:</p>
+  {% for image in images %}
+    <img src="/image/{{ image.id }}"/>
+  {% endfor %}
+{% endif %}
+
+<h3>Arvostelut</h3>
+{% if reviews %}
+  <ul>
+    {% for review in reviews %}
+    <li>{{ review.grade }}, {{ review.review }}<br />
+    <a href="/user/{{ review.user_id }}">{{ review.username }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Ei vielä muita arvosteluja.</p>
+{% endif %}
+
+<h3>Uusi arvostelu</h3>
+<form action="/create_review" method="post">
+  Arvostelu: <br />
+    <textarea name="review" rows="8" cols="60" maxlength="500" required></textarea><br />
+  Arvosana elokuvasta (1-10):
+  <input type="text" name="grade" size="1" pattern="[1-9]|10" required /><br />
+  <input type="hidden" name="movie_id" value="{{ movie.id }}" />
+  <input type="submit" value="Lisää arvostelu">
+</form>
+{% endblock %}

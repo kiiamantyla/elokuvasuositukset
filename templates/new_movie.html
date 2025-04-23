@@ -1,56 +1,49 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Uusi elokuvasuositus</title>
-</head>
+{% block title %}Uusi elokuva{% endblock %}
 
-<body>
-  <h1>Uusi elokuva</h1>
-  <form action="/create_movie" method="post">
-    <p>
-      Elokuvan nimi: <br />
-      <input type="text" name="title" maxlength="90" required />
-    </p>
-    <p>
-      Elokuvan julkaisuvuosi: <br />
-      <input type="text" name="year" size="5" pattern="[1-9][0-9]{0,3}" required />
-    </p>
-    <p>
-      Arvosana elokuvasta (1-10): <br />
-      <input type="text" name="grade" size="1" pattern="[1-9]|10" required />
-    </p>
-    <p>
-      Suositusteksti: <br />
-      <textarea name="recommendation" rows="8" cols="60" maxlength="500" required></textarea>
-    </p>
 
-    <p>
-      Genret:
-    <select name="genres" multiple>
-      <option value="">(valitse)</option>
-      {% for genre in genres %}
-        <option value="genre:{{ genre }}">{{ genre }}</option>
-      {% endfor %}
-    </select>
-    <p>(Pidä Ctrl(Windows)/Cmd(Mac) pohjassa valitaksesi useita vaihtoehtoja)</p>
-    </p>
-
-    <p>
-      Ikäraja:
-    <select name="age_limit">
-      <option value="">(valitse)</option>
-      {% for age_limit in age_limits %}
-        <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
-      {% endfor %}
-    </select>
-    </p>
-
-    <input type="submit" value="Luo suositus" />
-  </form>
+{% block content %}
+<h2>Uusi elokuva</h2>
+<form action="/create_movie" method="post">
   <p>
-    <a href="/">Takaisin etusivulle</a>
+    Elokuvan nimi: <br />
+    <input type="text" name="title" maxlength="90" required />
   </p>
-</body>
+  <p>
+    Elokuvan julkaisuvuosi: <br />
+    <input type="text" name="year" size="5" pattern="[1-9][0-9]{0,3}" required />
+  </p>
+  <p>
+    Arvosana elokuvasta (1-10): <br />
+    <input type="text" name="grade" size="1" pattern="[1-9]|10" required />
+  </p>
+  <p>
+    Suositusteksti: <br />
+    <textarea name="recommendation" rows="8" cols="60" maxlength="500" required></textarea>
+  </p>
 
-</html>
+  <p>
+    Genret:
+  <select name="genres" multiple>
+    <option value="">(valitse)</option>
+    {% for genre in genres %}
+      <option value="genre:{{ genre }}">{{ genre }}</option>
+    {% endfor %}
+  </select>
+  <p>(Pidä Ctrl(Windows)/Cmd(Mac) pohjassa valitaksesi useita vaihtoehtoja)</p>
+  </p>
+
+  <p>
+    Ikäraja:
+  <select name="age_limit">
+    <option value="">(valitse)</option>
+    {% for age_limit in age_limits %}
+      <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
+    {% endfor %}
+  </select>
+  </p>
+
+  <input type="submit" value="Luo suositus" />
+</form>
+{% endblock %}
