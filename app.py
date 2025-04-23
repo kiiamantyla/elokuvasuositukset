@@ -9,6 +9,7 @@ import config
 import db
 import movies
 import users
+import photos
 
 
 
@@ -37,10 +38,10 @@ def edit_images(movie_id):
     if movie["user_id"] != session["user_id"]:
         abort(403)
 
-    images = movies.get_images(movie_id)
-    poster = movies.get_posters(movie_id)
+    images = photos.get_images(movie_id)
+    posters = photos.get_posters(movie_id)
 
-    return render_template("images.html", movie=movie, images=images)
+    return render_template("images.html", movie=movie, images=images, posters=posters)
 
 
 @app.route("/add_image", methods=["POST"])
@@ -63,7 +64,7 @@ def add_image():
         if len(image) > 100 * 1024:
             return "VIRHE: liian suuri kuva"
 
-        movies.add_poster(movie_id, image)
+        photos.add_poster(movie_id, image)
 
 
     image_file = request.files["image"]
@@ -75,14 +76,35 @@ def add_image():
         if len(image) > 100 * 1024:
             return "VIRHE: liian suuri kuva"
 
-        movies.add_image(movie_id, image)
+        photos.add_image(movie_id, image)
+
+    return redirect("/images/" + str(movie_id))
+
+
+@app.route("/remove_images", methods=["POST"])
+def remove_images():
+    require_login()
+
+    movie_id = request.form["movie_id"]
+    movie = movies.get_movie(movie_id)
+    if not movie:
+        abort(404)
+    if movie["user_id"] != session["user_id"]:
+        abort(403)
+
+
+    for poster_id in request.form.getlist("poster_id"):
+        photos.remove_poster(movie_id, poster_id)
+
+    for image_id in request.form.getlist("image_id"):
+        photos.remove_image(movie_id, image_id)
 
     return redirect("/images/" + str(movie_id))
 
 
 @app.route("/image/<int:image_id>")
 def show_image(image_id):
-    image = movies.get_image(image_id)
+    image = photos.get_image(image_id)
     if not image:
         abort(404)
 
@@ -93,7 +115,7 @@ def show_image(image_id):
 
 @app.route("/poster/<int:poster_id>")
 def show_poster(poster_id):
-    poster = movies.get_poster(poster_id)
+    poster = photos.get_poster(poster_id)
     if not poster:
         abort(404)
 
@@ -161,8 +183,8 @@ def show_movie(movie_id):
 
     all_classes = movies.get_all_classes()
     reviews = movies.get_reviews(movie_id)
-    images = movies.get_images(movie_id)
-    posters = movies.get_posters(movie_id)
+    images = photos.get_images(movie_id)
+    posters = photos.get_posters(movie_id)
     return render_template("show_movie.html", movie=movie, genres=genres, age_limit=age_limit, all_classes=all_classes, reviews=reviews, images=images, posters=posters)
 
 

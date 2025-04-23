@@ -8,10 +8,39 @@
 <body>
   <h1>Elokuvan kuvat - {{ movie.title }}</h1>
 
-  <p>
-    Elokuvassa on {{ images | count }} muuta kuvaa.
-  </p>
 
+  <form action="/remove_images" method="post">
+    {% if posters | count == 1 %}
+      <p>Elokuvassa on 1 kansikuva.</p>
+    {% else %}
+      <p>Elokuvassa on {{ posters | count }} kansikuvaa.</p>
+    {% endif %}
+
+    {% for poster in posters %}
+      <img src="/poster/{{ poster.id }}"/>
+      <input type="checkbox" name="poster_id" value="{{ poster.id }}">
+    {% endfor %}
+
+
+    {% if images | count == 1 %}
+      <p>Elokuvassa on 1 muu kuva.</p>
+    {% else %}
+      <p>Elokuvassa on {{ images | count }} muuta kuvaa.</p>
+    {% endif %}
+
+    {% for image in images %}
+      <img src="/image/{{ image.id }}"/>
+      <input type="checkbox" name="image_id" value="{{ image.id }}">
+    {% endfor %}
+
+    <input type="hidden" name="movie_id" value="{{ movie.id }}">
+    <p>
+      <input type="submit" value="Poista valitut" />
+    </p>
+  </form>
+
+
+  <h2>Lisää uusi kuva</h2>
   <form action="/add_image" method="post" enctype="multipart/form-data">
     <p>
       Kansikuva: <input type="file" name="poster" accept=".jpg" />
