@@ -2,7 +2,7 @@ import sqlite3
 import re
 
 from flask import Flask
-from flask import abort, make_response, redirect, render_template, request, session
+from flask import abort, flash, make_response, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import config
@@ -58,11 +58,13 @@ def add_image():
     poster = request.files["poster"]
     if poster:
         if not poster.filename.endswith(".jpg"):
-            return "VIRHE: väärä tiedostomuoto"
+            flash("VIRHE: väärä tiedostomuoto")
+            return redirect("/images/" + str(movie_id))
 
         image = poster.read()
         if len(image) > 100 * 1024:
-            return "VIRHE: liian suuri kuva"
+            flash("VIRHE: liian suuri kuva")
+            return redirect("/images/" + str(movie_id))
 
         photos.add_poster(movie_id, image)
 
@@ -70,11 +72,13 @@ def add_image():
     image_file = request.files["image"]
     if image_file:
         if not image_file.filename.endswith(".jpg"):
-            return "VIRHE: väärä tiedostomuoto"
+            flash("VIRHE: väärä tiedostomuoto")
+            return redirect("/images/" + str(movie_id))
 
         image = image_file.read()
         if len(image) > 100 * 1024:
-            return "VIRHE: liian suuri kuva"
+            flash("VIRHE: liian suuri kuva")
+            return redirect("/images/" + str(movie_id))
 
         photos.add_image(movie_id, image)
 
@@ -185,6 +189,7 @@ def show_movie(movie_id):
     reviews = movies.get_reviews(movie_id)
     images = photos.get_images(movie_id)
     posters = photos.get_posters(movie_id)
+
     return render_template("show_movie.html", movie=movie, genres=genres, age_limit=age_limit, all_classes=all_classes, reviews=reviews, images=images, posters=posters)
 
 
@@ -374,14 +379,16 @@ def create_user():
         abort(403)
 
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
-
+        flash("VIRHE: salasanat eivät ole samat")
+        return redirect("/register")
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        flash("VIRHE: tunnus on jo varattu")
+        return redirect("/register")
 
-    return "Tunnus luotu"
+    flash("Tunnus luotu")
+    return redirect("/")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -399,7 +406,9 @@ def login():
             session["username"] = username
             return redirect("/")
         else:
-            return "VIRHE: väärä tunnus tai salasana"
+            flash("VIRHE: väärä tunnus tai salasana")
+            return redirect("/login")
+
 
 
 @app.route("/logout")
