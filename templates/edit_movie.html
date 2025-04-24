@@ -4,7 +4,9 @@
 
 
 {% block content %}
-<h2>Elokuvan muokkaus</h2>
+<h2>{{ movie.title }}</h2>
+<h3>Elokuvan muokkaus</h3>
+
 <form action="/update_movie" method="post">
   <p>
     Elokuvan nimi: <br />
@@ -55,4 +57,8 @@
 
   <input type="submit" value="Tallenna muutokset" />
 </form>
+
+<p>
+  <a href="/movie/{{ movie.id }}">Takaisin elokuvaan</a>
+</p>
 {% endblock %}

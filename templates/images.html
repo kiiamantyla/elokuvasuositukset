@@ -4,7 +4,8 @@
 
 
 {% block content %}
-<h2>Elokuvan kuvat - {{ movie.title }}</h2>
+<h2>{{ movie.title }}</h2>
+<h3>Elokuvan kuvat</h3>
 
 <form action="/remove_images" method="post">
   {% if posters | count == 1 %}
@@ -37,7 +38,7 @@
 </form>
 
 
-<h3>Lisää uusi kuva</h3>
+<h4>Lisää uusi kuva</h4>
 <form action="/add_image" method="post" enctype="multipart/form-data">
   <p>
     Kansikuva: <input type="file" name="poster" accept=".jpg" />
@@ -51,4 +52,5 @@
 
 <p>
   <a href="/movie/{{ movie.id }}">Takaisin elokuvaan</a>
+</p>
 {% endblock %}

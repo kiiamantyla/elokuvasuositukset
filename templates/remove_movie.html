@@ -4,11 +4,17 @@
 
 
 {% block content %}
-<h2>Elokuvan poisto</h2>
+<h2>{{ movie.title }}</h2>
+<h3>Elokuvan poisto</h3>
+
 <p>Elokuva: {{ movie.title }}</p>
 <p>Haluatko varmasti poistaa tämän elokuvan?</p>
 <form action="/remove_movie/{{ movie.id }}" method="post">
   <input type="submit" name="remove" value="Poista elokuva">
   <input type="submit" name="back" value="Palaa takaisin">
 </form>
+
+<p>
+  <a href="/movie/{{ movie.id }}">Takaisin elokuvaan</a>
+</p>
 {% endblock %}
