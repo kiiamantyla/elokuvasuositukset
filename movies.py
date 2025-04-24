@@ -105,6 +105,12 @@ def update_movie(movie_id, title, year, grade, recommendation, classes):
 def remove_movie(movie_id):
     sql = "DELETE FROM movie_classes WHERE movie_id = ?"
     db.execute(sql, [movie_id])
+    sql = "DELETE FROM images WHERE movie_id = ?"
+    db.execute(sql, [movie_id])
+    sql = "DELETE FROM posters WHERE movie_id = ?"
+    db.execute(sql, [movie_id])
+    sql = "DELETE FROM reviews WHERE movie_id = ?"
+    db.execute(sql, [movie_id])
     sql = "DELETE FROM movies WHERE id = ?"
     db.execute(sql, [movie_id])
 

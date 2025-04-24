@@ -78,7 +78,7 @@ def add_image():
 
         photos.add_image(movie_id, image)
 
-    return redirect("/images/" + str(movie_id))
+    return redirect("/movie/" + str(movie_id))
 
 
 @app.route("/remove_images", methods=["POST"])
