@@ -1,8 +1,24 @@
 body {
   margin: auto;
   max-width: 50em;
+  color: #222;
   font-family: sans-serif;
-  background-color: lightblue;
+  background-color: #fdfaf6;
+}
+
+h1, h2, h3 {
+    color: #222;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+a {
+  color: #007acc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 .movie {
@@ -12,9 +28,52 @@ body {
 }
 
 .info {
-  border: 2px solid black;
-  margin: 1em;
-  padding: 0.5em;
-  background-color: blue;
-  color: white;
+  border: 1px solid #444;
+  margin: 1em 0;
+  padding: 0.8em;
+  background-color: #e8f4ff;
+  color: #005a99;
+  border-radius: 5px;
+}
+
+
+.user-profile {
+  background-color: #ffffff;
+  padding: 1.5em;
+  margin: 2em auto;
+  max-width: 800px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.movie-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1em;
+}
+
+.movie-item {
+  background: #f7f7f7;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-left: 4px solid #007acc;
+  border-radius: 4px;
+}
+
+.movie-item a {
+  color: #007acc;
+  font-weight: bold;
+}
+
+.movie-item a:hover {
+  text-decoration: underline;
+}
+
+.movie-actions {
+  margin-top: 0.5em;
+  font-size: 0.9em;
+}
+
+.movie-actions a {
+  color: #b30000;
 }

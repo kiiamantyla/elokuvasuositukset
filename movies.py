@@ -60,6 +60,7 @@ def get_movie_classes(movie_id):
 def get_movies():
     sql = """SELECT movies.id,
                     movies.title,
+                    movies.user_id,
                     users.id,
                     users.username,
                     COUNT(reviews.id) review_count

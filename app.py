@@ -155,8 +155,8 @@ def show_user(user_id):
     user = users.get_user(user_id)
     if not user:
         abort(404)
-    items = users.get_items(user_id)
-    return render_template("show_user.html", user=user, items=items)
+    movies = users.get_movies(user_id)
+    return render_template("show_user.html", user=user, movies=movies)
 
 
 @app.route("/find_movie")
