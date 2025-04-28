@@ -1,14 +1,12 @@
 import sqlite3
 import re
 import secrets
-import markupsafe
 
 from flask import Flask
 from flask import abort, flash, make_response, redirect, render_template, request, session
-from werkzeug.security import generate_password_hash, check_password_hash
+import markupsafe
 
 import config
-import db
 import movies
 import users
 import photos
@@ -26,7 +24,7 @@ def require_login():
 
 def check_csrf():
     if "csrf_token" not in request.form:
-        abprt(403)
+        abort(403)
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
@@ -114,7 +112,6 @@ def remove_images():
     if movie["user_id"] != session["user_id"]:
         abort(403)
 
-
     for poster_id in request.form.getlist("poster_id"):
         photos.remove_poster(movie_id, poster_id)
 
@@ -174,8 +171,8 @@ def show_user(user_id):
     user = users.get_user(user_id)
     if not user:
         abort(404)
-    movies = users.get_movies(user_id)
-    return render_template("show_user.html", user=user, movies=movies)
+    user_movies = users.get_movies(user_id)
+    return render_template("show_user.html", user=user, movies=user_movies)
 
 
 @app.route("/find_movie")
@@ -209,7 +206,9 @@ def show_movie(movie_id):
     images = photos.get_images(movie_id)
     posters = photos.get_posters(movie_id)
 
-    return render_template("show_movie.html", movie=movie, genres=genres, age_limit=age_limit, all_classes=all_classes, reviews=reviews, images=images, posters=posters)
+    return render_template("show_movie.html", movie=movie, genres=genres,
+                           age_limit=age_limit, all_classes=all_classes,
+                           reviews=reviews, images=images, posters=posters)
 
 
 @app.route("/new_movie")
@@ -226,22 +225,42 @@ def create_movie():
     require_login()
     check_csrf()
 
-    title = request.form["title"]
-    if not title or len(title) > 90:
-        abort(403)
-    year = request.form["year"]
-    if not re.search("^[1-9][0-9]{0,3}$", year):
-        abort(403)
-    grade = request.form["grade"]
-    if not re.search("^[1-9]$|^10$", grade):
-        abort(403)
-    recommendation = request.form["recommendation"]
-    if not recommendation or len(recommendation) > 500:
-        abort(403)
+    def validate_field(condition):
+        if not condition:
+            abort(403)
+
+    movie_details = {
+        "title": request.form["title"],
+        "year": request.form["year"],
+        "grade": request.form["grade"],
+        "recommendation": request.form["recommendation"]
+        }
+
+    validate_field(movie_details["title"] and len(movie_details["title"]) <= 90)
+    validate_field(re.search("^[1-9][0-9]{0,3}$", movie_details["year"]))
+    validate_field(re.search("^[1-9]$|^10$", movie_details["grade"]))
+    validate_field( movie_details["recommendation"] and len(movie_details["recommendation"]) <= 500)
+
     user_id = session["user_id"]
 
     all_classes = movies.get_all_classes()
     selected_classes = []
+
+
+    def validate_classes(value_str, expected_title=None):
+        try:
+            class_title, class_value = value_str.split(":")
+        except ValueError:
+            abort(403)
+
+        if class_title not in all_classes or class_value not in all_classes[class_title]:
+            abort(403)
+
+        if expected_title and class_title != expected_title:
+            abort(403)
+
+        return class_title, class_value
+
 
     selected_genres = request.form.getlist("genres")
 
@@ -250,32 +269,15 @@ def create_movie():
 
     for genre in selected_genres:
         if genre:
-            try:
-                class_title, class_value = genre.split(":")
-            except ValueError:
-                abort(403)
-            class_title, class_value = genre.split(":")
-            if class_title not in all_classes:
-                abort(403)
-            if class_value not in all_classes[class_title]:
-                abort(403)
-            if class_title == "genre" and class_value in all_classes["genre"]:
-                selected_classes.append((class_title, class_value))
+            class_title, class_value = validate_classes(genre, expected_title="genre")
+            selected_classes.append((class_title, class_value))
 
     age_limit = request.form.get("age_limit")
     if age_limit:
-        try:
-            class_title, class_value = age_limit.split(":")
-        except ValueError:
-            abort(403)
-        if class_title not in all_classes:
-            abort(403)
-        if class_value not in all_classes[class_title]:
-            abort(403)
-        if class_title == "ikäraja" and class_value in all_classes["ikäraja"]:
-            selected_classes.append((class_title, class_value))
+        class_title, class_value = validate_classes(age_limit, expected_title="ikäraja")
+        selected_classes.append((class_title, class_value))
 
-    movie_id = movies.add_movie(title, year, grade, recommendation, user_id, selected_classes)
+    movie_id = movies.add_movie(movie_details, user_id, selected_classes)
 
     return redirect("/movie/" + str(movie_id))
 
@@ -298,7 +300,9 @@ def edit_movie(movie_id):
 
     all_genres = all_classes.get("genre", [])
     all_age_limits = all_classes.get("ikäraja", [])
-    return render_template("edit_movie.html", movie=movie, genres=genres, age_limits=age_limits, all_genres=all_genres, all_age_limits=all_age_limits)
+    return render_template("edit_movie.html", movie=movie, genres=genres,
+                           age_limits=age_limits, all_genres=all_genres,
+                           all_age_limits=all_age_limits)
 
 
 @app.route("/update_movie", methods=["POST"])
@@ -313,21 +317,39 @@ def update_movie():
     if movie["user_id"] != session["user_id"]:
         abort(403)
 
-    title = request.form["title"]
-    if not title or len(title) > 90:
-        abort(403)
-    year = request.form["year"]
-    if not re.search("^[1-9][0-9]{0,3}$", year):
-        abort(403)
-    grade = request.form["grade"]
-    if not re.search("^[1-9]$|^10$", grade):
-        abort(403)
-    recommendation = request.form["recommendation"]
-    if not recommendation or len(recommendation) > 1000:
-        abort(403)
+    def validate_field(condition):
+        if not condition:
+            abort(403)
+
+    movie_details = {
+        "title": request.form["title"],
+        "year": request.form["year"],
+        "grade": request.form["grade"],
+        "recommendation": request.form["recommendation"]
+        }
+
+    validate_field(movie_details["title"] and len(movie_details["title"]) <= 90)
+    validate_field(re.search("^[1-9][0-9]{0,3}$", movie_details["year"]))
+    validate_field(re.search("^[1-9]$|^10$", movie_details["grade"]))
+    validate_field( movie_details["recommendation"] and len(movie_details["recommendation"]) <= 500)
 
     all_classes = movies.get_all_classes()
     selected_classes = []
+
+    def validate_classes(value_str, expected_title=None):
+        try:
+            class_title, class_value = value_str.split(":")
+        except ValueError:
+            abort(403)
+
+        if class_title not in all_classes or class_value not in all_classes[class_title]:
+            abort(403)
+
+        if expected_title and class_title != expected_title:
+            abort(403)
+
+        return class_title, class_value
+
 
     selected_genres = request.form.getlist("genres")
 
@@ -336,31 +358,15 @@ def update_movie():
 
     for genre in selected_genres:
         if genre:
-            try:
-                class_title, class_value = genre.split(":")
-            except ValueError:
-                abort(403)
-            if class_title not in all_classes:
-                abort(403)
-            if class_value not in all_classes[class_title]:
-                abort(403)
-            if class_title == "genre" and class_value in all_classes["genre"]:
-                selected_classes.append((class_title, class_value))
+            class_title, class_value = validate_classes(genre, expected_title="genre")
+            selected_classes.append((class_title, class_value))
 
     age_limit = request.form.get("age_limit")
     if age_limit:
-        try:
-            class_title, class_value = age_limit.split(":")
-        except ValueError:
-            abort(403)
-        if class_title not in all_classes:
-            abort(403)
-        if class_value not in all_classes[class_title]:
-            abort(403)
-        if class_title == "ikäraja" and class_value in all_classes["ikäraja"]:
-            selected_classes.append((class_title, class_value))
+        class_title, class_value = validate_classes(age_limit, expected_title="ikäraja")
+        selected_classes.append((class_title, class_value))
 
-    movies.update_movie(movie_id, title, year, grade, recommendation, selected_classes)
+    movies.update_movie(movie_id, movie_details, selected_classes)
     return redirect("/movie/" + str(movie_id))
 
 
@@ -382,8 +388,7 @@ def remove_movie(movie_id):
         if "remove" in request.form:
             movies.remove_movie(movie_id)
             return redirect("/")
-        else:
-            return redirect("/movie/" + str(movie_id))
+        return redirect("/movie/" + str(movie_id))
 
 
 @app.route("/register")
@@ -428,9 +433,8 @@ def login():
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
-        else:
-            flash("VIRHE: väärä tunnus tai salasana")
-            return redirect("/login")
+        flash("VIRHE: väärä tunnus tai salasana")
+        return redirect("/login")
 
 
 

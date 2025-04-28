@@ -1,6 +1,11 @@
 import db
 
-def add_movie(title, year, grade, recommendation, user_id, classes):
+def add_movie(movie_details, user_id, classes):
+    title = movie_details["title"]
+    year = movie_details["year"]
+    grade = movie_details["grade"]
+    recommendation = movie_details["recommendation"]
+
     sql = """INSERT INTO movies (title, year, grade, recommendation, user_id)
              VALUES (?, ?, ?, ?, ?)"""
     db.execute(sql, [title, year, grade, recommendation, user_id])
@@ -85,7 +90,12 @@ def get_movie(movie_id):
     return result[0] if result else None
 
 
-def update_movie(movie_id, title, year, grade, recommendation, classes):
+def update_movie(movie_id, movie_details, classes):
+    title = movie_details["title"]
+    year = movie_details["year"]
+    grade = movie_details["grade"]
+    recommendation = movie_details["recommendation"]
+
     sql = """UPDATE movies SET title = ?,
                                year = ?,
                                grade = ?,

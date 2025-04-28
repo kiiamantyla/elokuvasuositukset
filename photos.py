@@ -40,5 +40,3 @@ def remove_poster(movie_id, poster_id):
 def remove_image(movie_id, image_id):
     sql = "DELETE FROM images WHERE id = ? AND movie_id = ?"
     db.execute(sql, [image_id, movie_id])
-
-
