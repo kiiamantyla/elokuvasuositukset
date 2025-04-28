@@ -62,6 +62,7 @@
     Arvosana elokuvasta (1-10):
     <input type="text" name="grade" size="1" pattern="[1-9]|10" required /><br />
     <input type="hidden" name="movie_id" value="{{ movie.id }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Lisää arvostelu">
   </form>
 {% endif %}

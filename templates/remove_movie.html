@@ -10,6 +10,7 @@
 <p>Elokuva: {{ movie.title }}</p>
 <p>Haluatko varmasti poistaa tämän elokuvan?</p>
 <form action="/remove_movie/{{ movie.id }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <input type="submit" name="remove" value="Poista elokuva">
   <input type="submit" name="back" value="Palaa takaisin">
 </form>

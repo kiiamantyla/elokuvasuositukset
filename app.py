@@ -1,5 +1,6 @@
 import sqlite3
 import re
+import secrets
 
 from flask import Flask
 from flask import abort, flash, make_response, redirect, render_template, request, session
@@ -19,6 +20,13 @@ app.secret_key = config.secret_key
 
 def require_login():
     if "user_id" not in session:
+        abort(403)
+
+
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abprt(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
 
@@ -47,6 +55,7 @@ def edit_images(movie_id):
 @app.route("/add_image", methods=["POST"])
 def add_image():
     require_login()
+    check_csrf()
 
     movie_id = request.form["movie_id"]
     movie = movies.get_movie(movie_id)
@@ -88,6 +97,7 @@ def add_image():
 @app.route("/remove_images", methods=["POST"])
 def remove_images():
     require_login()
+    check_csrf()
 
     movie_id = request.form["movie_id"]
     movie = movies.get_movie(movie_id)
@@ -131,6 +141,7 @@ def show_poster(poster_id):
 @app.route("/create_review", methods=["POST"])
 def create_review():
     require_login()
+    check_csrf()
 
     grade = request.form["grade"]
     if not re.search("^[1-9]$|^10$", grade):
@@ -205,6 +216,7 @@ def new_movie():
 @app.route("/create_movie", methods=["POST"])
 def create_movie():
     require_login()
+    check_csrf()
 
     title = request.form["title"]
     if not title or len(title) > 90:
@@ -284,6 +296,7 @@ def edit_movie(movie_id):
 @app.route("/update_movie", methods=["POST"])
 def update_movie():
     require_login()
+    check_csrf()
 
     movie_id = request.form["movie_id"]
     movie = movies.get_movie(movie_id)
@@ -357,6 +370,7 @@ def remove_movie(movie_id):
         return render_template("remove_movie.html", movie=movie)
 
     if request.method == "POST":
+        check_csrf()
         if "remove" in request.form:
             movies.remove_movie(movie_id)
             return redirect("/")
@@ -404,6 +418,7 @@ def login():
         if user_id:
             session["user_id"] = user_id
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             flash("VIRHE: väärä tunnus tai salasana")
