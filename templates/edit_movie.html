@@ -9,26 +9,26 @@
 
 <form action="/update_movie" method="post">
   <p>
-    Elokuvan nimi: <br />
-    <input type="text" name="title" value="{{ movie.title }}" maxlength="90" required />
+    <label for="title">Elokuvan nimi:</label> <br />
+    <input type="text" name="title" id="title" value="{{ movie.title }}" maxlength="90" required />
   </p>
   <p>
-    Elokuvan julkaisuvuosi: <br />
-    <input type="text" name="year" size="5" value="{{ movie.year }}" pattern="[1-9][0-9]{0,3}" required />
+    <label for="year">Elokuvan julkaisuvuosi:</label> <br />
+    <input type="text" name="year" id="year" size="5" value="{{ movie.year }}" pattern="[1-9][0-9]{0,3}" required />
   </p>
   <p>
-    Arvosana elokuvasta (1-10): <br />
-    <input type="text" name="grade" size="1" value="{{ movie.grade }}" pattern="[1-9]|10" required />
+    <label for="grade">Arvosana elokuvasta (1-10):</label> <br />
+    <input type="text" name="grade" id="grade" size="1" value="{{ movie.grade }}" pattern="[1-9]|10" required />
   </p>
   <p>
-    Suositusteksti: <br />
-    <textarea name="recommendation" rows="8" cols="60" maxlength="500" required>{{ movie.recommendation }}</textarea>
+    <label for="recommendation">Suositusteksti:</label> <br />
+    <textarea name="recommendation" id="recommendation" rows="8" cols="60" maxlength="500" required>{{ movie.recommendation }}</textarea>
   </p>
   <input type="hidden" name="movie_id" value="{{ movie.id }}" />
 
   <p>
-    Genret:
-  <select name="genres" multiple>
+    <label for="genres">Genret:</label> <br />
+  <select name="genres" id="genres" multiple>
     <option value="">(valitse)</option>
     {% for genre in all_genres %}
       {% if genre in genres %}
@@ -42,8 +42,8 @@
   </p>
 
   <p>
-    Ikäraja:
-  <select name="age_limit">
+    <label for="age_limit">Ikäraja:</label> <br />
+  <select name="age_limit" id="age_limit">
     <option value="">(valitse)</option>
     {% for age_limit in all_age_limits %}
       {% if age_limit in age_limits %}

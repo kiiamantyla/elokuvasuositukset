@@ -7,25 +7,25 @@
 <h2>Uusi elokuva</h2>
 <form action="/create_movie" method="post">
   <p>
-    Elokuvan nimi: <br />
-    <input type="text" name="title" maxlength="90" required />
+    <label for="title">Elokuvan nimi:</label> <br />
+    <input type="text" name="title" id="title" maxlength="90" required />
   </p>
   <p>
-    Elokuvan julkaisuvuosi: <br />
-    <input type="text" name="year" size="5" pattern="[1-9][0-9]{0,3}" required />
+    <label for="year">Elokuvan julkaisuvuosi:</label> <br />
+    <input type="text" name="year" id="year" size="5" pattern="[1-9][0-9]{0,3}" required />
   </p>
   <p>
-    Arvosana elokuvasta (1-10): <br />
-    <input type="text" name="grade" size="1" pattern="[1-9]|10" required />
+    <label for="grade">Arvosana elokuvasta (1-10):</label> <br />
+    <input type="text" name="grade" id="grade" size="1" pattern="[1-9]|10" required />
   </p>
   <p>
-    Suositusteksti: <br />
-    <textarea name="recommendation" rows="8" cols="60" maxlength="500" required></textarea>
+    <label for="recommendation">Suositusteksti:</label> <br />
+    <textarea name="recommendation" id="recommendation" rows="8" cols="60" maxlength="500" required></textarea>
   </p>
 
   <p>
-    Genret:
-  <select name="genres" multiple>
+    <label for="genres">Genret:</label> <br />
+  <select name="genres" id="genres" multiple>
     <option value="">(valitse)</option>
     {% for genre in genres %}
       <option value="genre:{{ genre }}">{{ genre }}</option>
@@ -35,8 +35,8 @@
   </p>
 
   <p>
-    Ikäraja:
-  <select name="age_limit">
+    <label for="age_limit">Ikäraja:</label> <br />
+  <select name="age_limit" id="age_limit">
     <option value="">(valitse)</option>
     {% for age_limit in age_limits %}
       <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>

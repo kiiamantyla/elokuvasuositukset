@@ -57,13 +57,15 @@
 {% if session.user_id %}
   <h3>Uusi arvostelu</h3>
   <form action="/create_review" method="post">
-    Arvostelu: <br />
-      <textarea name="review" rows="8" cols="60" maxlength="500" required></textarea><br />
-    Arvosana elokuvasta (1-10):
-    <input type="text" name="grade" size="1" pattern="[1-9]|10" required /><br />
+    <label for="review">Arvostelu:</label> <br />
+      <textarea name="review" id="review" rows="8" cols="60" maxlength="500" required></textarea><br />
+    <label for="grade">Arvosana elokuvasta (1-10):</label> <br />
+    <input type="text" name="grade" id="grade" size="1" pattern="[1-9]|10" required /> <br />
     <input type="hidden" name="movie_id" value="{{ movie.id }}" />
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" value="Lisää arvostelu">
+    <p>
+      <input type="submit" value="Lisää arvostelu">
+    </p>
   </form>
 {% endif %}
 {% endblock %}

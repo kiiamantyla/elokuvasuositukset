@@ -42,10 +42,12 @@
 <h4>Lisää uusi kuva</h4>
 <form action="/add_image" method="post" enctype="multipart/form-data">
   <p>
-    Kansikuva: <input type="file" name="poster" accept=".jpg" />
+    <label for="poster">Kansikuva:</label> <br />
+    <input type="file" name="poster" id="poster" accept=".jpg" />
   </p>
   <p>
-    Muita kuvia: <input type="file" name="image" accept=".jpg" />
+    <label for="image">Muita kuvia:</label> <br />
+    <input type="file" name="image" accept=".jpg" />
   </p>
   <input type="hidden" name="movie_id" value="{{ movie.id }}"/>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />

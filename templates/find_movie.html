@@ -8,7 +8,8 @@
 
 <form action="/find_movie" method="get">
   <p>
-    Hakusana: <input type="text" name="query" value="{{ query }}">
+    <label for="query">Hakusana:</label>
+    <input type="text" name="query" id="query" value="{{ query }}">
   </p>
   <input type="submit" value="Hae">
 </form>
