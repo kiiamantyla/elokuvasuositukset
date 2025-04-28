@@ -33,7 +33,7 @@
   </p>
 {% endif %}
 <p>Arvosana: {{ movie.grade }}</p>
-<p>Arvostelu: {{ movie.recommendation }}</p>
+<p>Arvostelu:<br /> {{ movie.recommendation | show_lines }}</p>
 
 {% if images %}
   <p>Kuvia:</p>
@@ -46,7 +46,7 @@
 {% if reviews %}
   <ul>
     {% for review in reviews %}
-    <li>{{ review.grade }}, {{ review.review }}<br />
+    <li>Arvosana: {{ review.grade }},<br /> {{ review.review | show_lines }} <br />
     <a href="/user/{{ review.user_id }}">{{ review.username }}</a></li>
     {% endfor %}
   </ul>
