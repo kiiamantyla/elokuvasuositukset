@@ -15,7 +15,7 @@
 {% endif %}
 
 {% for poster in posters %}
-  <img src="/poster/{{ poster.id }}"/>
+  <img src="/poster/{{ poster.id }}" alt="Elokuvan kansikuva"/>
 {% endfor %}
 
 <p>Julkaisuvuosi: {{ movie.year }}</p>
@@ -38,7 +38,7 @@
 {% if images %}
   <p>Kuvia:</p>
   {% for image in images %}
-    <img src="/image/{{ image.id }}"/>
+    <img src="/image/{{ image.id }}" alt="Elokuvan kuvat"/>
   {% endfor %}
 {% endif %}
 

@@ -15,7 +15,7 @@
   {% endif %}
 
   {% for poster in posters %}
-    <img src="/poster/{{ poster.id }}"/>
+    <img src="/poster/{{ poster.id }}" alt="Elokuvan kansikuva"/>
     <input type="checkbox" name="poster_id" value="{{ poster.id }}">
   {% endfor %}
 
@@ -27,7 +27,7 @@
   {% endif %}
 
   {% for image in images %}
-    <img src="/image/{{ image.id }}"/>
+    <img src="/image/{{ image.id }}" alt="Elokuva kuva"/>
     <input type="checkbox" name="image_id" value="{{ image.id }}">
   {% endfor %}
 
