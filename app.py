@@ -177,13 +177,61 @@ def show_user(user_id):
 
 @app.route("/find_movie")
 def find_movie():
-    query = request.args.get("query")
-    if query:
-        results = movies.find_movies(query)
-    else:
-        query = ""
-        results = []
-    return render_template("find_movie.html", query=query, results=results)
+    query = request.args.get("query", "").strip()
+    min_year = request.args.get("min_year", type=int)
+    max_year = request.args.get("max_year", type=int)
+    min_grade = request.args.get("min_grade", type=int)
+    username = request.args.get("username", "").strip()
+    advanced = request.args.get("advanced", type=int)
+    genres = request.args.get("genres", "").strip()
+
+    age_limits = request.args.get("age_limit", "").strip()
+
+    if min_grade is not None:
+        if min_grade < 1 or min_grade > 10:
+            flash("VIRHE: epäkelpo arvosana")
+            return redirect("/find_movie")
+
+    for year, label in [(min_year, "aloitus vuosi"), (max_year, "lopetus vuosi")]:
+        if year is not None and year < 1:
+            flash(f"VIRHE: epäkelpo {label}")
+            return redirect("/find_movie")
+
+    if min_year is not None and max_year is not None:
+        if max_year < min_year:
+            flash("VIRHE: epäkelpo lukuväli")
+            return redirect("/find_movie")
+
+    all_classes = movies.get_all_classes()
+    all_genres = all_classes.get("genre", [])
+    all_age_limits = all_classes.get("ikäraja", [])
+
+    results = []
+    if query or advanced:
+        search_params = {
+            'query': query,
+            'min_grade': min_grade,
+            'min_year': min_year,
+            'max_year': max_year,
+            'username': username,
+            'genres': genres,
+            'age_limits': age_limits
+        }
+
+        results = movies.find_movies(search_params)
+
+    return render_template("find_movie.html",
+                           query=query,
+                           min_year=min_year,
+                           max_year=max_year,
+                           min_grade=min_grade,
+                           username=username,
+                           advanced=advanced,
+                           genres=genres,
+                           age_limits=age_limits,
+                           all_genres=all_genres,
+                           all_age_limits=all_age_limits,
+                           results=results)
 
 
 @app.route("/movie/<int:movie_id>")
@@ -206,9 +254,14 @@ def show_movie(movie_id):
     images = photos.get_images(movie_id)
     posters = photos.get_posters(movie_id)
 
-    return render_template("show_movie.html", movie=movie, genres=genres,
-                           age_limit=age_limit, all_classes=all_classes,
-                           reviews=reviews, images=images, posters=posters)
+    return render_template("show_movie.html",
+                           movie=movie,
+                           genres=genres,
+                           age_limit=age_limit,
+                           all_classes=all_classes,
+                           reviews=reviews,
+                           images=images,
+                           posters=posters)
 
 
 @app.route("/new_movie")
@@ -300,8 +353,11 @@ def edit_movie(movie_id):
 
     all_genres = all_classes.get("genre", [])
     all_age_limits = all_classes.get("ikäraja", [])
-    return render_template("edit_movie.html", movie=movie, genres=genres,
-                           age_limits=age_limits, all_genres=all_genres,
+    return render_template("edit_movie.html",
+                           movie=movie,
+                           genres=genres,
+                           age_limits=age_limits,
+                           all_genres=all_genres,
                            all_age_limits=all_age_limits)
 
 

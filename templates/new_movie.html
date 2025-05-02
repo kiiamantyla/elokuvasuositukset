@@ -12,11 +12,11 @@
   </p>
   <p>
     <label for="year">Elokuvan julkaisuvuosi:</label> <br />
-    <input type="text" name="year" id="year" size="5" pattern="[1-9][0-9]{0,3}" required />
+    <input type="text" name="year" id="year" class="small-input" pattern="[1-9][0-9]{0,3}" required />
   </p>
   <p>
     <label for="grade">Arvosana elokuvasta (1-10):</label> <br />
-    <input type="text" name="grade" id="grade" size="1" pattern="[1-9]|10" required />
+    <input type="text" name="grade" id="grade" class="small-input" pattern="[1-9]|10" required />
   </p>
   <p>
     <label for="recommendation">Suositusteksti:</label> <br />
@@ -31,7 +31,7 @@
       <option value="genre:{{ genre }}">{{ genre }}</option>
     {% endfor %}
   </select>
-  <p>(Pidä Ctrl(Windows)/Cmd(Mac) pohjassa valitaksesi useita vaihtoehtoja)</p>
+  <p class="help-text">(Pidä Ctrl(Windows)/Cmd(Mac) pohjassa valitaksesi useita vaihtoehtoja)</p>
   </p>
 
   <p>

@@ -81,3 +81,13 @@ a:hover {
 .movie-actions a:hover {
   text-decoration: underline;
 }
+
+
+.small-input {
+  width: 55px;
+}
+
+.help-text {
+  font-size: 0.8em;
+  color: #888;
+}

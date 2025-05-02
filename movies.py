@@ -126,10 +126,76 @@ def remove_movie(movie_id):
     db.execute(sql, [movie_id])
 
 
-def find_movies(query):
-    sql = """SELECT id, title
+def find_movies(search_params):
+
+    query = search_params["query"]
+    min_grade = search_params["min_grade"]
+    min_year = search_params["min_year"]
+    max_year = search_params["max_year"]
+    username = search_params["username"]
+    genres = search_params["genres"]
+    age_limits = search_params["age_limits"]
+
+
+    sql ="""SELECT DISTINCT movies.id, movies.title
              FROM movies
-             WHERE title LIKE ? OR year LIKE ? OR recommendation LIKE ?
-             ORDER BY id DESC"""
-    params = ["%" + query + "%", "%" + query + "%", "%" + query + "%"]
+             LEFT JOIN movie_classes mc_genre ON movies.id = mc_genre.movie_id
+             LEFT JOIN classes c_genre ON
+                       mc_genre.class_id = c_genre.id AND
+                       c_genre.title = 'genre'
+             LEFT JOIN movie_classes mc_age ON movies.id = mc_age.movie_id
+             LEFT JOIN classes c_age ON
+                       mc_age.class_id = c_age.id AND
+                       c_age.title = 'ikäraja'
+             LEFT JOIN users ON movies.user_id = users.id
+             LEFT JOIN reviews ON movies.id = reviews.movie_id
+             WHERE 1=1"""
+
+    params = []
+
+    if query:
+        sql += """ AND (
+                movies.title LIKE ?
+                OR movies.recommendation LIKE ?
+                OR reviews.review LIKE ?
+                )"""
+        pattern = "%" + query + "%"
+        params += [pattern] * 3
+
+    if min_year:
+        sql += " AND movies.year >= ?"
+        params.append(min_year)
+
+    if max_year:
+        sql += " AND movies.year <= ?"
+        params.append(max_year)
+
+    if min_grade:
+        sql += " AND movies.grade >= ?"
+        params.append(min_grade)
+
+    if username:
+        sql += " AND users.username LIKE ?"
+        params.append("%" + username + "%")
+
+    if genres:
+        genre_list = [
+            genre.split(":")[1] if genre.startswith("genre:") else genre
+            for genre in genres.split(",")
+        ]
+        placeholders = ",".join("?" * len(genre_list))
+        sql += f" AND c_genre.value IN ({placeholders})"
+        params.extend(genre_list)
+
+    if age_limits:
+        age_limit_list = [
+            age_limit.split(":")[1] if age_limit.startswith("ikäraja:") else age_limit
+            for age_limit in age_limits.split(",")
+        ]
+        placeholders = ",".join("?" * len(age_limit_list))
+        sql += f" AND c_age.value IN ({placeholders})"
+        params.extend(age_limit_list)
+
+    sql += " ORDER BY movies.id DESC"
+
     return db.query(sql, params)
