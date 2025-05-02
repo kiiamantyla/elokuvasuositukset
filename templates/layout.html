@@ -12,7 +12,7 @@
 
   {% if session.user_id %}
   <p>
-    Olet kirjautunut nimellä {{ session.username }}
+    Olet kirjautunut nimellä <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
   </p>
   {% endif %}
 
