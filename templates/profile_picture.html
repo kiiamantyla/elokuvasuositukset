@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}Profiilikuva - {{ user.username }}{% endblock %}
+
+{% block content %}
+<h2>Käyttäjä: {{ user.username }}</h2>
+<h3>Profiilikuva</h3>
+
+{% if user.has_profile_picture %}
+  <form action="/remove_profile_picture" method="post">
+    <img src="/profile_picture/{{ user.id }}" alt="Profiilikuva" />
+    <p>
+      <input type="hidden" name="user_id" value="{{ user.id }}">
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <input type="submit" value="Poista profiilikuva" />
+    </p>
+  </form>
+{% else %}
+  <p>Sinulla ei ole profiilikuvaa.</p>
+{% endif %}
+
+
+<h4>Lisää uusi profiilikuva</h4>
+
+<form action="/add_profile_picture" method="post" enctype="multipart/form-data">
+  <p>
+    <label for="profile_picture">Profiilikuva:</label><br />
+    <input type="file" name="profile_picture" id="profile_picture" accept=".jpg" />
+  </p>
+  <input type="hidden" name="user_id" value="{{ user.id }}">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" value="Lähetä" />
+</form>
+
+<p>
+  <a href="/user/{{ user.id }}">Takaisin käyttäjään</a>
+</p>
+{% endblock %}

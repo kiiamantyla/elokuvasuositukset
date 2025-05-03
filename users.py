@@ -4,7 +4,12 @@ import db
 import movies
 
 def get_user(user_id):
-    sql = "SELECT id, username FROM users WHERE id = ?"
+    sql = """SELECT id,
+                    username,
+                    profile_picture,
+                    profile_picture IS NOT NULL has_profile_picture
+             FROM users
+             WHERE id = ?"""
     result = db.query(sql, [user_id])
     return result[0] if result else None
 
@@ -49,3 +54,19 @@ def check_login(username, password):
     if check_password_hash(password_hash, password):
         return user_id
     return None
+
+
+def update_image(user_id, profile_picture):
+    sql = "UPDATE users SET profile_picture = ? WHERE id = ?"
+    db.execute(sql, [profile_picture, user_id])
+
+
+def get_profile_picture(user_id):
+    sql = "SELECT profile_picture FROM users WHERE id = ?"
+    result = db.query(sql, [user_id])
+    return result[0][0] if result else None
+
+
+def remove_profile_picture(user_id):
+    sql = "UPDATE users SET profile_picture = NULL WHERE id = ?"
+    db.execute(sql, [user_id])

@@ -6,6 +6,17 @@
 {% block content %}
 <h2>Käyttäjä: {{ user.username }}</h2>
 
+{% if user.has_profile_picture %}
+  <img src="/profile_picture/{{ user.id }}" alt="Profiilikuva"/></br>
+  {% if session.user_id == user.id %}
+    <a href="/edit_profile_picture/{{ user.id }}">Muokkaa profiilikuvaa</a>
+  {% endif %}
+{% else %}
+  {% if session.user_id == user.id %}
+    <a href="/edit_profile_picture/{{ user.id }}">Lisää profiilikuva</a>
+  {% endif %}
+{% endif %}
+
 
 {% if movies %}
   <p>

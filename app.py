@@ -175,6 +175,77 @@ def show_user(user_id):
     return render_template("show_user.html", user=user, movies=user_movies)
 
 
+@app.route("/edit_profile_picture/<int:user_id>")
+def edit_profile_pictur(user_id):
+    require_login()
+
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    if int(user_id) != int(session["user_id"]):
+        abort(403)
+
+    profile_picture = users.get_profile_picture(user_id)
+    return render_template("profile_picture.html",
+                           user=user,
+                           profile_picture=profile_picture)
+
+
+
+@app.route("/add_profile_picture", methods=["POST"])
+def add_profile_picture():
+    require_login()
+    check_csrf()
+
+    user_id = request.form["user_id"]
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    if int(user_id) != int(session["user_id"]):
+        abort(403)
+
+    picture_file = request.files["profile_picture"]
+    if not picture_file.filename.endswith(".jpg"):
+        flash("VIRHE: väärä tiedostomuoto")
+        return redirect("/edit_profile_picture/" + str(user_id))
+
+    profile_picture = picture_file.read()
+    if len(profile_picture) > 100 * 1024:
+        flash("VIRHE: liian suuri kuva")
+        return redirect("/edit_profile_picture/" + str(user_id))
+
+    users.update_image(user_id, profile_picture)
+    return redirect("/user/" + str(user_id))
+
+
+@app.route("/remove_profile_picture", methods=["POST"])
+def remove_profile_picture():
+    require_login()
+    check_csrf()
+
+    user_id = request.form["user_id"]
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    if int(user_id) != int(session["user_id"]):
+        abort(403)
+
+    users.remove_profile_picture(user_id)
+    flash("Profiilikuva poistettu onnistuneesti!")
+    return redirect("/user/" + str(user_id))
+
+
+@app.route("/profile_picture/<int:user_id>")
+def show_profile_picture(user_id):
+    profile_picture = users.get_profile_picture(user_id)
+    if not profile_picture:
+        abort(404)
+
+    response = make_response(bytes(profile_picture))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response
+
+
 @app.route("/find_movie")
 def find_movie():
     query = request.args.get("query", "").strip()
