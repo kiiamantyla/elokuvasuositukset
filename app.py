@@ -324,6 +324,7 @@ def show_movie(movie_id):
     reviews = movies.get_reviews(movie_id)
     images = photos.get_images(movie_id)
     posters = photos.get_posters(movie_id)
+    review_stats = movies.get_review_stats(movie_id)
 
     return render_template("show_movie.html",
                            movie=movie,
@@ -332,7 +333,8 @@ def show_movie(movie_id):
                            all_classes=all_classes,
                            reviews=reviews,
                            images=images,
-                           posters=posters)
+                           posters=posters,
+                           review_stats=review_stats)
 
 
 @app.route("/new_movie")

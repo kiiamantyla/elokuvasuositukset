@@ -36,6 +36,15 @@ def get_reviews(movie_id):
     return db.query(sql, [movie_id])
 
 
+def get_review_stats(movie_id):
+    sql = """SELECT COUNT(*) count,
+                    ROUND(AVG(grade), 1) average
+             FROM reviews
+             WHERE movie_id = ?"""
+    result = db.query(sql, [movie_id])
+    return result[0] if result else {"count": 0, "average": None}
+
+
 def get_class_id(title, value):
     sql = "SELECT id FROM classes WHERE title = ? AND value = ?"
     result = db.query(sql, [title, value])

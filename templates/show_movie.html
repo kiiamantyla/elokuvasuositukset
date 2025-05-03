@@ -44,6 +44,10 @@
 
 <h3>Arvostelut</h3>
 {% if reviews %}
+
+  <p>
+    Keskimääräinen arvosana: {{ review_stats.average }} ({{ review_stats.count}} arvostelu{% if review_stats.count != 1 %}a{% endif %})
+  </p>
   <ul>
     {% for review in reviews %}
     <li>Arvosana: {{ review.grade }},<br /> {{ review.review | show_lines }} <br />
