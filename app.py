@@ -403,6 +403,31 @@ def create_movie():
 
     movie_id = movies.add_movie(movie_details, user_id, selected_classes)
 
+    poster = request.files["poster"]
+    if poster:
+        if not poster.filename.endswith(".jpg"):
+            flash("VIRHE: väärä tiedostomuoto")
+            return redirect("/images/" + str(movie_id))
+
+        poster_data = poster.read()
+        if len(poster_data) > 100 * 1024:
+            flash("VIRHE: liian suuri kuva")
+            return redirect("/images/" + str(movie_id))
+        photos.add_poster(movie_id, poster_data)
+
+
+    image_file = request.files["image"]
+    if image_file:
+        if not image_file.filename.endswith(".jpg"):
+            flash("VIRHE: väärä tiedostomuoto")
+            return redirect("/images/" + str(movie_id))
+
+        image_data = image_file.read()
+        if len(image_data) > 100 * 1024:
+            flash("VIRHE: liian suuri kuva")
+            return redirect("/images/" + str(movie_id))
+        photos.add_image(movie_id, image_data)
+
     return redirect("/movie/" + str(movie_id))
 
 
