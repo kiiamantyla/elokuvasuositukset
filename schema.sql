@@ -9,8 +9,11 @@ CREATE TABLE movies (
     id INTEGER PRIMARY KEY,
     title TEXT,
     year INTEGER,
-    grade INTEGER,
-    recommendation TEXT,
+    duration INTEGER,
+    director TEXT,
+    language TEXT,
+    main_actors TEXT,
+    imdb_url TEXT,
     user_id INTEGER REFERENCES users
 );
 

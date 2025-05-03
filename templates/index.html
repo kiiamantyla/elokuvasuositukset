@@ -9,7 +9,7 @@
 {% for movie in movies %}
 <div class="movie">
 <a href="/movie/{{ movie.id }}">{{ movie.title }}</a>
-Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a> <br />
+Lisääjä: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a> <br />
 Arvostelujen määrä: {{ movie.review_count }} <br />
 </div>
 {% endfor %}

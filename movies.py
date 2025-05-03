@@ -1,23 +1,5 @@
 import db
 
-def add_movie(movie_details, user_id, classes):
-    title = movie_details["title"]
-    year = movie_details["year"]
-    grade = movie_details["grade"]
-    recommendation = movie_details["recommendation"]
-
-    sql = """INSERT INTO movies (title, year, grade, recommendation, user_id)
-             VALUES (?, ?, ?, ?, ?)"""
-    db.execute(sql, [title, year, grade, recommendation, user_id])
-
-    movie_id = db.last_insert_id()
-    sql = "INSERT INTO movie_classes (movie_id, class_id) VALUES (?, ?)"
-    for class_title, class_value in classes:
-        class_id = get_class_id(class_title, class_value)
-        if class_id:
-            db.execute(sql, [movie_id, class_id])
-    return movie_id
-
 
 def add_review(movie_id, user_id, grade, review):
     sql = """INSERT INTO reviews (movie_id, user_id, grade, review)
@@ -89,8 +71,11 @@ def get_movie(movie_id):
     sql = """SELECT movies.id,
                     movies.title,
                     movies.year,
-                    movies.grade,
-                    movies.recommendation,
+                    movies.duration,
+                    movies.director,
+                    movies.language,
+                    movies.main_actors,
+                    movies.imdb_url,
                     users.id user_id,
                     users.username
            FROM movies, users
@@ -99,18 +84,55 @@ def get_movie(movie_id):
     return result[0] if result else None
 
 
+def add_movie(movie_details, user_id, classes):
+    title = movie_details["title"]
+    year = movie_details["year"]
+    duration = movie_details["duration"]
+    director = movie_details["director"]
+    language = movie_details["language"]
+    main_actors = movie_details["main_actors"]
+    imdb_url = movie_details["imdb_url"]
+
+    sql = """INSERT INTO movies (title,
+                                 year,
+                                 duration,
+                                 director,
+                                 language,
+                                 main_actors,
+                                 imdb_url,
+                                 user_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
+    db.execute(sql, [title, year, duration, director,
+                     language, main_actors, imdb_url, user_id])
+
+    movie_id = db.last_insert_id()
+    sql = "INSERT INTO movie_classes (movie_id, class_id) VALUES (?, ?)"
+    for class_title, class_value in classes:
+        class_id = get_class_id(class_title, class_value)
+        if class_id:
+            db.execute(sql, [movie_id, class_id])
+    return movie_id
+
+
 def update_movie(movie_id, movie_details, classes):
     title = movie_details["title"]
     year = movie_details["year"]
-    grade = movie_details["grade"]
-    recommendation = movie_details["recommendation"]
+    duration = movie_details["duration"]
+    director = movie_details["director"]
+    language = movie_details["language"]
+    main_actors = movie_details["main_actors"]
+    imdb_url = movie_details["imdb_url"]
 
     sql = """UPDATE movies SET title = ?,
                                year = ?,
-                               grade = ?,
-                               recommendation = ?
+                               duration = ?,
+                               director = ?,
+                               language = ?,
+                               main_actors = ?,
+                               imdb_url = ?
                            WHERE id = ?"""
-    db.execute(sql, [title, year, grade, recommendation, movie_id])
+    db.execute(sql, [title, year, duration, director,
+                     language, main_actors, imdb_url, movie_id])
 
     sql = "DELETE FROM movie_classes WHERE movie_id = ?"
     db.execute(sql, [movie_id])
@@ -138,7 +160,6 @@ def remove_movie(movie_id):
 def find_movies(search_params):
 
     query = search_params["query"]
-    min_grade = search_params["min_grade"]
     min_year = search_params["min_year"]
     max_year = search_params["max_year"]
     username = search_params["username"]
@@ -165,11 +186,13 @@ def find_movies(search_params):
     if query:
         sql += """ AND (
                 movies.title LIKE ?
-                OR movies.recommendation LIKE ?
+                OR movies.director LIKE ?
+                OR movies.language LIKE ?
+                OR movies.main_actors LIKE ?
                 OR reviews.review LIKE ?
                 )"""
         pattern = "%" + query + "%"
-        params += [pattern] * 3
+        params += [pattern] * 5
 
     if min_year:
         sql += " AND movies.year >= ?"
@@ -178,10 +201,6 @@ def find_movies(search_params):
     if max_year:
         sql += " AND movies.year <= ?"
         params.append(max_year)
-
-    if min_grade:
-        sql += " AND movies.grade >= ?"
-        params.append(min_grade)
 
     if username:
         sql += " AND users.username LIKE ?"

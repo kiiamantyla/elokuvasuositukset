@@ -251,17 +251,11 @@ def find_movie():
     query = request.args.get("query", "").strip()
     min_year = request.args.get("min_year", type=int)
     max_year = request.args.get("max_year", type=int)
-    min_grade = request.args.get("min_grade", type=int)
     username = request.args.get("username", "").strip()
     advanced = request.args.get("advanced", type=int)
     genres = request.args.get("genres", "").strip()
 
     age_limits = request.args.get("age_limit", "").strip()
-
-    if min_grade is not None:
-        if min_grade < 1 or min_grade > 10:
-            flash("VIRHE: epäkelpo arvosana")
-            return redirect("/find_movie")
 
     for year, label in [(min_year, "aloitus vuosi"), (max_year, "lopetus vuosi")]:
         if year is not None and year < 1:
@@ -280,13 +274,12 @@ def find_movie():
     results = []
     if query or advanced:
         search_params = {
-            'query': query,
-            'min_grade': min_grade,
-            'min_year': min_year,
-            'max_year': max_year,
-            'username': username,
-            'genres': genres,
-            'age_limits': age_limits
+            "query": query,
+            "min_year": min_year,
+            "max_year": max_year,
+            "username": username,
+            "genres": genres,
+            "age_limits": age_limits
         }
 
         results = movies.find_movies(search_params)
@@ -295,7 +288,6 @@ def find_movie():
                            query=query,
                            min_year=min_year,
                            max_year=max_year,
-                           min_grade=min_grade,
                            username=username,
                            advanced=advanced,
                            genres=genres,
@@ -358,20 +350,30 @@ def create_movie():
     movie_details = {
         "title": request.form["title"],
         "year": request.form["year"],
-        "grade": request.form["grade"],
-        "recommendation": request.form["recommendation"]
+        "director": request.form["director"],
+        "duration": request.form["duration"],
+        "language": request.form["language"],
+        "main_actors": request.form["main_actors"],
+        "imdb_url": request.form["imdb_url"]
         }
 
     validate_field(movie_details["title"] and len(movie_details["title"]) <= 90)
     validate_field(re.search("^[1-9][0-9]{0,3}$", movie_details["year"]))
-    validate_field(re.search("^[1-9]$|^10$", movie_details["grade"]))
-    validate_field( movie_details["recommendation"] and len(movie_details["recommendation"]) <= 500)
+    validate_field(movie_details["duration"].isdigit() and
+                   1 <= int(movie_details["duration"]) <= 600)
+
+    if movie_details["director"]:
+        validate_field(len(movie_details["director"]) <= 90)
+    if movie_details["language"]:
+        validate_field(len(movie_details["language"]) <= 50)
+    if movie_details["main_actors"]:
+        validate_field(len(movie_details["main_actors"]) <= 200)
+    if movie_details["imdb_url"]:
+        validate_field(movie_details["imdb_url"].startswith("http"))
 
     user_id = session["user_id"]
-
     all_classes = movies.get_all_classes()
     selected_classes = []
-
 
     def validate_classes(value_str, expected_title=None):
         try:
@@ -387,9 +389,7 @@ def create_movie():
 
         return class_title, class_value
 
-
     selected_genres = request.form.getlist("genres")
-
     if "" in selected_genres and len(selected_genres) > 1:
         abort(403)
 
@@ -405,30 +405,23 @@ def create_movie():
 
     movie_id = movies.add_movie(movie_details, user_id, selected_classes)
 
+    def upload_image(image_file, movie_id):
+        if image_file:
+            if not image_file.filename.endswith(".jpg"):
+                flash("VIRHE: väärä tiedostomuoto")
+                return redirect("/images/" + str(movie_id))
+
+            image_data = image_file.read()
+            if len(image_data) > 100 * 1024:
+                flash("VIRHE: liian suuri kuva")
+                return redirect("/images/" + str(movie_id))
+            photos.add_image(movie_id, image_data)
+
     poster = request.files["poster"]
-    if poster:
-        if not poster.filename.endswith(".jpg"):
-            flash("VIRHE: väärä tiedostomuoto")
-            return redirect("/images/" + str(movie_id))
+    upload_image(poster, movie_id)
 
-        poster_data = poster.read()
-        if len(poster_data) > 100 * 1024:
-            flash("VIRHE: liian suuri kuva")
-            return redirect("/images/" + str(movie_id))
-        photos.add_poster(movie_id, poster_data)
-
-
-    image_file = request.files["image"]
-    if image_file:
-        if not image_file.filename.endswith(".jpg"):
-            flash("VIRHE: väärä tiedostomuoto")
-            return redirect("/images/" + str(movie_id))
-
-        image_data = image_file.read()
-        if len(image_data) > 100 * 1024:
-            flash("VIRHE: liian suuri kuva")
-            return redirect("/images/" + str(movie_id))
-        photos.add_image(movie_id, image_data)
+    image = request.files["image"]
+    upload_image(image, movie_id)
 
     return redirect("/movie/" + str(movie_id))
 
@@ -478,14 +471,29 @@ def update_movie():
     movie_details = {
         "title": request.form["title"],
         "year": request.form["year"],
-        "grade": request.form["grade"],
-        "recommendation": request.form["recommendation"]
+        "director": request.form["director"],
+        "duration": request.form["duration"],
+        "language": request.form["language"],
+        "main_actors": request.form["main_actors"],
+        "imdb_url": request.form["imdb_url"]
         }
 
     validate_field(movie_details["title"] and len(movie_details["title"]) <= 90)
     validate_field(re.search("^[1-9][0-9]{0,3}$", movie_details["year"]))
-    validate_field(re.search("^[1-9]$|^10$", movie_details["grade"]))
-    validate_field( movie_details["recommendation"] and len(movie_details["recommendation"]) <= 500)
+    validate_field(movie_details["duration"].isdigit() and
+                   1 <= int(movie_details["duration"]) <= 600)
+
+    if movie_details["director"]:
+        validate_field(len(movie_details["director"]) <= 90)
+
+    if movie_details["language"]:
+        validate_field(len(movie_details["language"]) <= 50)
+
+    if movie_details["main_actors"]:
+        validate_field(len(movie_details["main_actors"]) <= 200)
+
+    if movie_details["imdb_url"]:
+        validate_field(movie_details["imdb_url"].startswith("http"))
 
     all_classes = movies.get_all_classes()
     selected_classes = []

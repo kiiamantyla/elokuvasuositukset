@@ -11,7 +11,7 @@
     <label for="query">Hakusana:</label>
     <input type="text" name="query" id="query" value="{{ query }}">
   </p>
-  <p class="help-text">Voit etsiä elokuvia nimen tai arvostelun/suosituksen perusteella.</p>
+  <p class="help-text">Voit etsiä elokuvia nimen, ohjaajan, kielen, näyttelijöiden tai arvostelun perusteella</p>
 
   {% if advanced %}
   <p>
@@ -19,11 +19,6 @@
     <input type="number" name="min_year" id="min_year" min="1" class="small-input" placeholder="alkaen" value="{{ min_year }}">
     –
     <input type="number" name="max_year" id="max_year" min="1" max="2025" class="small-input" placeholder="asti" value="{{ max_year }}">
-  </p>
-
-  <p>
-    <label for="min_grade">Arvosana vähintään:</label>
-    <input type="number" name="min_grade" id="min_grade" min="1" max="10" class="small-input" value="{{ min_grade }}">
   </p>
 
   <p>
@@ -72,7 +67,6 @@
     <input type="hidden" name="age_limit" value="{{ age_limits }}">
     <input type="hidden" name="min_year" value="{{ min_year }}">
     <input type="hidden" name="max_year" value="{{ max_year }}">
-    <input type="hidden" name="min_grade" value="{{ min_grade }}">
     <input type="hidden" name="username" value="{{ username }}">
     <input type="hidden" name="advanced" value="1">
     <button type="submit">Näytä lisähaku</button>
@@ -86,14 +80,13 @@
     <input type="hidden" name="age_limit" value="{{ age_limits }}">
     <input type="hidden" name="min_year" value="{{ min_year }}">
     <input type="hidden" name="max_year" value="{{ max_year }}">
-    <input type="hidden" name="min_grade" value="{{ min_grade }}">
     <input type="hidden" name="username" value="{{ username }}">
     <button type="submit">Piilota lisähaku</button>
   </form>
 </p>
 {% endif %}
 
-{% if query or genres or min_year or max_year or min_grade or age_limits or username %}
+{% if query or genres or min_year or max_year or age_limits or username %}
 <h3>Tulokset</h3>
 
 {% if results %}

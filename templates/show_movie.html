@@ -19,7 +19,8 @@
 {% endfor %}
 
 <p>Julkaisuvuosi: {{ movie.year }}</p>
-<p>Suosittelija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a></p>
+<p>Kesto: {{ movie.duration }} min</p>
+
 {% if genres %}
   <p>Genret:
     {% for genre in genres %}
@@ -27,13 +28,30 @@
     {% endfor %}
   </p>
 {% endif %}
+
 {% if age_limit %}
   <p>
     Ikäraja: {{ age_limit.value }}
   </p>
 {% endif %}
-<p>Arvosana: {{ movie.grade }}</p>
-<p>Arvostelu:<br /> {{ movie.recommendation | show_lines }}</p>
+
+{% if movie.director %}
+  <p>Ohjaaja: {{ movie.director }}</p>
+{% endif %}
+
+{% if movie.language %}
+  <p>Alkuperäinen kieli: {{ movie.language }}</p>
+{% endif %}
+
+{% if movie.main_actors %}
+  <p>Pääosan näyttelijät: {{ movie.main_actors | show_lines }}</p>
+{% endif %}
+
+{% if movie.imdb_url %}
+  <p>IMDb-linkki: {{ movie.imdb_url }}</p>
+{% endif %}
+
+<p>Julkaisija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a></p>
 
 {% if images %}
   <p>Kuvia:</p>
@@ -44,7 +62,6 @@
 
 <h3>Arvostelut</h3>
 {% if reviews %}
-
   <p>
     Keskimääräinen arvosana: {{ review_stats.average }} ({{ review_stats.count}} arvostelu{% if review_stats.count != 1 %}a{% endif %})
   </p>
@@ -64,7 +81,7 @@
     <label for="review">Arvostelu:</label> <br />
       <textarea name="review" id="review" rows="8" cols="60" maxlength="500" required></textarea><br />
     <label for="grade">Arvosana elokuvasta (1-10):</label> <br />
-    <input type="text" name="grade" id="grade" size="1" pattern="[1-9]|10" required /> <br />
+    <input type="number" name="grade" id="grade" min="1" max="10" class="small-imput" required /> <br />
     <input type="hidden" name="movie_id" value="{{ movie.id }}" />
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <p>

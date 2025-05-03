@@ -14,18 +14,12 @@
   </p>
   <p>
     <label for="year">Elokuvan julkaisuvuosi:</label> <br />
-    <input type="text" name="year" id="year" class="small-input" value="{{ movie.year }}" pattern="[1-9][0-9]{0,3}" required />
+    <input type="text" name="year" id="year" class="small-input" value="{{ movie.year }}" min="1" max="2050" required />
   </p>
   <p>
-    <label for="grade">Arvosana elokuvasta (1-10):</label> <br />
-    <input type="text" name="grade" id="grade" class="small-input" value="{{ movie.grade }}" pattern="[1-9]|10" required />
+    <label for="duration">Kesto (min):</label> <br />
+    <input type="number" name="duration" id="duration" value="{{ movie.duration }}" min="1" required />
   </p>
-  <p>
-    <label for="recommendation">Suositusteksti:</label> <br />
-    <textarea name="recommendation" id="recommendation" rows="8" cols="60" maxlength="500" required>{{ movie.recommendation }}</textarea>
-  </p>
-  <input type="hidden" name="movie_id" value="{{ movie.id }}" />
-
   <p>
   <label for="genres">Genret:</label> <br />
   <select name="genres" id="genres" multiple>
@@ -54,6 +48,23 @@
     {% endfor %}
   </select>
   </p>
+  <p>
+    <label for="director">Ohjaaja:</label> <br />
+    <input type="text" name="director" id="director" value="{{ movie.director }}" maxlength="90" />
+  </p>
+  <p>
+    <label for="language">Alkuperäinen kieli:</label> <br />
+    <input type="text" name="language" id="language" value="{{ movie.language }}" maxlength="50" />
+  </p>
+  <p>
+    <label for="main_actors">Pääosan näyttelijät:</label> <br />
+    <textarea name="main_actors" id="main_actors" rows="3" cols="60" maxlength="200">{{ movie.main_actors}}</textarea>
+  </p>
+  <p>
+    <label for="imdb_url">IMDb-linkki:</label> <br />
+    <input type="text" name="imdb_url" id="imdb_url" value="{{ movie.imdb_url }}" />
+  </p>
+  <input type="hidden" name="movie_id" value="{{ movie.id }}" />
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <input type="submit" value="Tallenna muutokset" />
 </form>
