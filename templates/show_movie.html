@@ -52,7 +52,7 @@
         <p>IMDb-linkki: <a href="{{ movie.imdb_url }}" target="_blank">{{ movie.imdb_url }}</a></p>
       {% endif %}
 
-      <p>Julkaisija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a></p>
+      <p>Julkaisija: <a href="/user/{{ movie.user_id }}/1" class="movie-creator">{{ movie.username }}</a></p>
     </div>
 
     {% if images %}
@@ -75,7 +75,7 @@
         <ul>
           {% for review in reviews %}
             <li>Arvosana: {{ review.grade }}<br /> {{ review.review | show_lines }} <br />
-            <a href="/user/{{ review.user_id }}">{{ review.username }}</a></li>
+            <a href="/user/{{ review.user_id }}/1">{{ review.username }}</a></li>
           {% endfor %}
         </ul>
       {% else %}

@@ -14,18 +14,24 @@ def get_user(user_id):
     return result[0] if result else None
 
 
-def get_movies(user_id):
+def get_movies(user_id, page, page_size):
+    limit = page_size
+    offset = page_size * (page - 1)
+
     sql = """SELECT movies.id,
                     movies.title,
                     movies.year,
                     movies.user_id,
-                    COUNT(reviews.id) review_count
+                    COUNT(reviews.id) AS review_count
              FROM movies
              LEFT JOIN reviews ON reviews.movie_id = movies.id
              WHERE movies.user_id = ?
              GROUP BY movies.id
-             ORDER BY movies.id DESC"""
-    results = [dict(row) for row in db.query(sql, [user_id])]
+             ORDER BY movies.id DESC
+             LIMIT ? OFFSET ?"""
+
+    results = db.query(sql, [user_id, limit, offset])
+    results = [dict(row) for row in results]
 
     for movie in results:
         classes = movies.get_movie_classes(movie["id"])
@@ -34,6 +40,12 @@ def get_movies(user_id):
         movie["age_limit"] = age
 
     return results
+
+
+def movie_count(user_id):
+    sql = "SELECT COUNT(*) AS count FROM movies WHERE user_id = ?"
+    result = db.query(sql, [user_id])
+    return result[0]["count"] if result else 0
 
 
 def create_user(username, password):

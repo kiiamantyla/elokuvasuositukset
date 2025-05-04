@@ -13,12 +13,17 @@
     <input type="text" name="query" id="query" value="{{ query }}">
 
     <p class="help-text">
-      Voit etsiä elokuvia nimen, ohjaajan, kielen, näyttelijöiden tai arvostelun perusteella
+      Voit etsiä elokuvia nimen, ohjaajan, kielen tai näyttelijöiden perusteella
     </p>
 
     {% if advanced %}
     <div class="advanced-search">
     <h3>Lisähaku</h3>
+
+    <p>
+      <label for="min_grade">Arvosana vähintään:</label>
+      <input type="number" name="min_grade" id="min_grade" min="1" max="10" class="small-input" value="{{ min_grade }}">
+    </p>
 
     <p>
       <label for="min_year">Vuosiväli:</label>
@@ -95,20 +100,39 @@
   {% endif %}
 </div>
 
-  {% if query or genres or min_year or max_year or age_limits or username %}
+  {% if query or genres or min_grade or min_year or max_year or age_limits or username %}
   <div class="movie-form">
     <h3>Tulokset</h3>
+    <p>Löytyi {{ total_results }} elokuvaa (sivu {{ page }} / {{ page_count }})</p>
 
     {% if results %}
       <div class="movie-list">
         {% for movie in results %}
         <div class="movie-item">
           <a href="/movie/{{ movie.id }}" class="movie-title" >{{ movie.title }}</a>
-          <p>Lisääjä: <a href="/user/{{ movie.user_id }}" class="movie-creator" >{{ movie.username }}</a></p>
+          <p>Lisääjä: <a href="/user/{{ movie.user_id }}/1" class="movie-creator">{{ movie.username }}</a></p>
           <p>Arvostelujen määrä: {{ movie.review_count }}</p>
         </div>
         {% endfor %}
       </div>
+
+      <p>
+  {% if page > 1 %}
+    <a href="/find_movie?query={{ query }}&min_grade={{ min_grade }}
+    &min_year={{ min_year }}&max_year={{ max_year }}&username={{ username }}
+    &advanced={{ advanced }}&genres={{ genres }}&age_limit={{ age_limits }}
+    &page={{ page - 1 }}">&lt;&lt;</a>
+  {% endif %}
+
+  Sivu {{ page }} / {{ page_count }}
+
+  {% if page < page_count %}
+    <a href="/find_movie?query={{ query }}&min_grade={{ min_grade }}
+    &min_year={{ min_year }}&max_year={{ max_year }}&username={{ username }}
+    &advanced={{ advanced }}&genres={{ genres }}&age_limit={{ age_limits }}
+    &page={{ page + 1 }}">&gt;&gt;</a>
+  {% endif %}
+</p>
     {% else %}
       <p>Ei tuloksia</p>
     {% endif %}

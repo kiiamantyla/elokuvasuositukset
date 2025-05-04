@@ -16,14 +16,14 @@
   {% if session.user_id %}
   <div class="user-info">
     <p>
-      Olet kirjautunut nimellä <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+      Olet kirjautunut nimellä <a href="/user/{{ session.user_id }}/1">{{ session.username }}</a>
     </p>
   </div>
   {% endif %}
 
   <div class="navbar">
     <p>
-      <a href="/">Etusivu</a> |
+      <a href="/1">Etusivu</a> |
       <a href="/find_movie">Etsi elokuva</a> |
     {% if session.user_id %}
       <a href="/new_movie">Lisää elokuva</a> |

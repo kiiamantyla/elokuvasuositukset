@@ -53,7 +53,7 @@ def get_movie_classes(movie_id):
     return db.query(sql, [movie_id])
 
 
-def get_movies():
+def get_movies(page=None, page_size=None):
     sql = """SELECT movies.id,
                     movies.title,
                     movies.user_id,
@@ -63,8 +63,18 @@ def get_movies():
              FROM movies JOIN users ON movies.user_id = users.id
                          LEFT JOIN reviews ON movies.id = reviews.movie_id
              GROUP BY movies.id
-             ORDER BY movies.id DESC"""
-    return db.query(sql)
+             ORDER BY movies.id DESC
+             LIMIT ? OFFSET ?"""
+
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [limit, offset])
+
+
+def movie_count():
+    sql = "SELECT COUNT(*) count FROM movies"
+    result = db.query(sql)
+    return result[0]["count"] if result else 0
 
 
 def get_movie(movie_id):
@@ -157,78 +167,136 @@ def remove_movie(movie_id):
     db.execute(sql, [movie_id])
 
 
-def find_movies(search_params):
+def find_movies(search_params, page, page_size):
+    sql = """SELECT DISTINCT m.id,
+                             m.title,
+                             m.user_id,
+                             u.username,
+                             COUNT(r.id) AS review_count
+             FROM movies m
+             LEFT JOIN movie_classes mc_genre ON m.id = mc_genre.movie_id
+             LEFT JOIN classes c_genre ON mc_genre.class_id = c_genre.id AND c_genre.title = "genre"
+             LEFT JOIN movie_classes mc_age ON m.id = mc_age.movie_id
+             LEFT JOIN classes c_age ON mc_age.class_id = c_age.id AND c_age.title = "ikäraja"
+             LEFT JOIN users u ON m.user_id = u.id
+             LEFT JOIN reviews r ON m.id = r.movie_id
+             WHERE 1=1"""
 
+    params = []
+
+    if search_params["query"]:
+        sql += """ AND (
+            m.title LIKE ?
+            OR m.director LIKE ?
+            OR m.language LIKE ?
+            OR m.main_actors LIKE ?
+            OR r.review LIKE ?
+        )"""
+        pattern = f"%{search_params["query"]}%"
+        params += [pattern] * 5
+
+    if search_params["min_grade"]:
+        sql += " AND r.grade >= ?"
+        params.append(search_params["min_grade"])
+
+    if search_params["min_year"]:
+        sql += " AND m.year >= ?"
+        params.append(search_params["min_year"])
+
+    if search_params["max_year"]:
+        sql += " AND m.year <= ?"
+        params.append(search_params["max_year"])
+
+    if search_params["username"]:
+        sql += " AND u.username LIKE ?"
+        params.append(f"%{search_params["username"]}%")
+
+    if search_params["genres"]:
+        genre_list = [g.split(":")[1] if g.startswith("genre:")
+                      else g for g in search_params["genres"].split(",")]
+        placeholders = ",".join("?" * len(genre_list))
+        sql += f" AND c_genre.value IN ({placeholders})"
+        params.extend(genre_list)
+
+    if search_params["age_limits"]:
+        age_list = [a.split(":")[1] if a.startswith("ikäraja:")
+                    else a for a in search_params["age_limits"].split(",")]
+        placeholders = ",".join("?" * len(age_list))
+        sql += f" AND c_age.value IN ({placeholders})"
+        params.extend(age_list)
+
+    sql += """ GROUP BY m.id, m.title, m.user_id
+               ORDER BY m.id DESC
+               LIMIT ? OFFSET ?"""
+
+    limit = page_size
+    offset = page_size * (page - 1)
+    params += [limit, offset]
+
+    return db.query(sql, params)
+
+
+def count_found_movies(search_params):
     query = search_params["query"]
+    min_grade = search_params["min_grade"]
     min_year = search_params["min_year"]
     max_year = search_params["max_year"]
     username = search_params["username"]
     genres = search_params["genres"]
     age_limits = search_params["age_limits"]
 
-
-    sql ="""SELECT DISTINCT movies.id,
-                            movies.title,
-                            movies.user_id,
-                            users.username,
-                            COUNT(reviews.id) review_count
-             FROM movies
-             LEFT JOIN movie_classes mc_genre ON movies.id = mc_genre.movie_id
-             LEFT JOIN classes c_genre ON
-                       mc_genre.class_id = c_genre.id AND
-                       c_genre.title = 'genre'
-             LEFT JOIN movie_classes mc_age ON movies.id = mc_age.movie_id
-             LEFT JOIN classes c_age ON
-                       mc_age.class_id = c_age.id AND
-                       c_age.title = 'ikäraja'
-             LEFT JOIN users ON movies.user_id = users.id
-             LEFT JOIN reviews ON movies.id = reviews.movie_id
+    sql = """SELECT COUNT(DISTINCT m.id) AS count
+             FROM movies m
+             LEFT JOIN movie_classes mc_genre ON m.id = mc_genre.movie_id
+             LEFT JOIN classes c_genre ON mc_genre.class_id = c_genre.id AND c_genre.title = "genre"
+             LEFT JOIN movie_classes mc_age ON m.id = mc_age.movie_id
+             LEFT JOIN classes c_age ON mc_age.class_id = c_age.id AND c_age.title = "ikäraja"
+             LEFT JOIN users u ON m.user_id = u.id
+             LEFT JOIN reviews r ON m.id = r.movie_id
              WHERE 1=1"""
 
     params = []
 
     if query:
         sql += """ AND (
-                movies.title LIKE ?
-                OR movies.director LIKE ?
-                OR movies.language LIKE ?
-                OR movies.main_actors LIKE ?
-                OR reviews.review LIKE ?
-                )"""
-        pattern = "%" + query + "%"
+            m.title LIKE ?
+            OR m.director LIKE ?
+            OR m.language LIKE ?
+            OR m.main_actors LIKE ?
+            OR r.review LIKE ?
+        )"""
+        pattern = f"%{query}%"
         params += [pattern] * 5
 
+    if min_grade:
+        sql += " AND r.grade >= ?"
+        params.append(min_grade)
+
     if min_year:
-        sql += " AND movies.year >= ?"
+        sql += " AND m.year >= ?"
         params.append(min_year)
 
     if max_year:
-        sql += " AND movies.year <= ?"
+        sql += " AND m.year <= ?"
         params.append(max_year)
 
     if username:
-        sql += " AND users.username LIKE ?"
-        params.append("%" + username + "%")
+        sql += " AND u.username LIKE ?"
+        params.append(f"%{username}%")
 
     if genres:
-        genre_list = [
-            genre.split(":")[1] if genre.startswith("genre:") else genre
-            for genre in genres.split(",")
-        ]
+        genre_list = [g.split(":")[1] if g.startswith("genre:")
+                      else g for g in genres.split(",")]
         placeholders = ",".join("?" * len(genre_list))
         sql += f" AND c_genre.value IN ({placeholders})"
         params.extend(genre_list)
 
     if age_limits:
-        age_limit_list = [
-            age_limit.split(":")[1] if age_limit.startswith("ikäraja:") else age_limit
-            for age_limit in age_limits.split(",")
-        ]
-        placeholders = ",".join("?" * len(age_limit_list))
+        age_list = [a.split(":")[1] if a.startswith("ikäraja:")
+                    else a for a in age_limits.split(",")]
+        placeholders = ",".join("?" * len(age_list))
         sql += f" AND c_age.value IN ({placeholders})"
-        params.extend(age_limit_list)
+        params.extend(age_list)
 
-    sql += """ GROUP BY movies.id, movies.title, movies.user_id
-               ORDER BY movies.id DESC"""
-
-    return db.query(sql, params)
+    result = db.query(sql, params)
+    return result[0]["count"] if result else 0

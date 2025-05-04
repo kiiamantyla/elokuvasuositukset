@@ -49,3 +49,26 @@ CREATE TABLE posters (
     movie_id INTEGER REFERENCES movies,
     poster BLOB
 );
+
+
+CREATE INDEX idx_reviews_movie_id ON reviews(movie_id);
+CREATE INDEX idx_reviews_user_id ON reviews(user_id);
+
+CREATE INDEX idx_users_id ON users(id);
+CREATE INDEX idx_users_username ON users(username);
+
+CREATE INDEX idx_movies_id ON movies(id);
+CREATE INDEX idx_movies_user_id ON movies(user_id);
+CREATE INDEX idx_movies_year ON movies(year);
+CREATE INDEX idx_movies_title ON movies(title);
+CREATE INDEX idx_movies_director ON movies(director);
+CREATE INDEX idx_movies_language ON movies(language);
+CREATE INDEX idx_movies_main_actors ON movies(main_actors);
+
+CREATE INDEX idx_movie_classes_movie_id ON movie_classes(movie_id);
+CREATE INDEX idx_movie_classes_class_id ON movie_classes(class_id);
+
+CREATE INDEX idx_classes_title_value ON classes(title, value);
+
+CREATE INDEX idx_images_movie_id ON images(movie_id);
+CREATE INDEX idx_posters_movie_id ON posters(movie_id);

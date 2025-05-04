@@ -1,9 +1,11 @@
 import sqlite3
 import re
 import secrets
+import math
+import time
 
 from flask import Flask
-from flask import abort, flash, make_response, redirect, render_template, request, session
+from flask import abort, flash, make_response, redirect, render_template, request, session, g
 import markupsafe
 
 import config
@@ -12,9 +14,19 @@ import users
 import photos
 
 
-
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+@app.after_request
+def after_request(response):
+    elapsed_time = round(time.time() - g.start_time, 2)
+    print("elapsed time:", elapsed_time, "s")
+    return response
 
 
 def require_login():
@@ -37,9 +49,22 @@ def show_lines(content):
 
 
 @app.route("/")
-def index():
-    all_movies = movies.get_movies()
-    return render_template("index.html", movies=all_movies)
+@app.route("/<int:page>")
+def index(page=1):
+    page_size = 10
+    total_movies = movies.movie_count()
+    page_count = max(math.ceil(total_movies / page_size), 1)
+
+    if page < 1:
+        return redirect("/1")
+    if page > page_count:
+        return redirect(f"/{page_count}")
+
+    movie_list = movies.get_movies(page, page_size)
+    return render_template("index.html",
+                           movies=movie_list,
+                           page=page,
+                           page_count=page_count)
 
 
 @app.route("/images/<int:movie_id>")
@@ -166,13 +191,28 @@ def create_review():
     return redirect("/movie/" + str(movie_id))
 
 
-@app.route("/user/<int:user_id>")
-def show_user(user_id):
+@app.route("/user/<int:user_id>/<int:page>")
+def show_user(user_id, page=1):
+    page_size = 10
     user = users.get_user(user_id)
     if not user:
         abort(404)
-    user_movies = users.get_movies(user_id)
-    return render_template("show_user.html", user=user, movies=user_movies)
+
+    total_movies = users.movie_count(user_id)
+    page_count = max(math.ceil(total_movies / page_size), 1)
+
+    if page < 1:
+        return redirect(f"/user/{user_id}/1")
+    if page > page_count:
+        return redirect(f"/user/{user_id}/{page_count}")
+
+    user_movies = users.get_movies(user_id, page, page_size)
+    return render_template("show_user.html",
+                           user=user,
+                           movies=user_movies,
+                           page=page,
+                           page_count=page_count,
+                           total_movies=total_movies)
 
 
 @app.route("/edit_profile_picture/<int:user_id>")
@@ -215,7 +255,7 @@ def add_profile_picture():
         return redirect("/edit_profile_picture/" + str(user_id))
 
     users.update_image(user_id, profile_picture)
-    return redirect("/user/" + str(user_id))
+    return redirect("/user/" + str(user_id) + "/1")
 
 
 @app.route("/remove_profile_picture", methods=["POST"])
@@ -232,7 +272,7 @@ def remove_profile_picture():
 
     users.remove_profile_picture(user_id)
     flash("Profiilikuva poistettu onnistuneesti!")
-    return redirect("/user/" + str(user_id))
+    return redirect("/user/" + str(user_id) + "/1")
 
 
 @app.route("/profile_picture/<int:user_id>")
@@ -248,53 +288,62 @@ def show_profile_picture(user_id):
 
 @app.route("/find_movie")
 def find_movie():
-    query = request.args.get("query", "").strip()
-    min_year = request.args.get("min_year", type=int)
-    max_year = request.args.get("max_year", type=int)
-    username = request.args.get("username", "").strip()
+    search_params = {
+        "query": request.args.get("query", "").strip(),
+        "min_grade": request.args.get("min_grade", type=int),
+        "min_year": request.args.get("min_year", type=int),
+        "max_year": request.args.get("max_year", type=int),
+        "username": request.args.get("username", "").strip(),
+        "genres": request.args.get("genres", "").strip(),
+        "age_limits": request.args.get("age_limit", "").strip()
+    }
     advanced = request.args.get("advanced", type=int)
-    genres = request.args.get("genres", "").strip()
+    page = request.args.get("page", default=1, type=int)
+    page_size = 10
 
-    age_limits = request.args.get("age_limit", "").strip()
-
-    for year, label in [(min_year, "aloitus vuosi"), (max_year, "lopetus vuosi")]:
+    for year, label in [(search_params["min_year"], "aloitus vuosi"),
+                        (search_params["max_year"], "lopetus vuosi")]:
         if year is not None and year < 1:
             flash(f"VIRHE: epäkelpo {label}")
             return redirect("/find_movie")
 
-    if min_year is not None and max_year is not None:
-        if max_year < min_year:
-            flash("VIRHE: epäkelpo lukuväli")
-            return redirect("/find_movie")
+    if (search_params["min_year"] and search_params["max_year"] and
+        search_params["max_year"] < search_params["min_year"]):
+        flash("VIRHE: epäkelpo lukuväli")
+        return redirect("/find_movie")
+
+    if search_params["min_grade"] and not 1 <= search_params["min_grade"] <= 10:
+        flash("VIRHE: epäkelpo arvosana")
+        return redirect("/find_movie")
 
     all_classes = movies.get_all_classes()
     all_genres = all_classes.get("genre", [])
     all_age_limits = all_classes.get("ikäraja", [])
-
     results = []
-    if query or advanced:
-        search_params = {
-            "query": query,
-            "min_year": min_year,
-            "max_year": max_year,
-            "username": username,
-            "genres": genres,
-            "age_limits": age_limits
-        }
+    total = 0
+    page_count = 1
 
-        results = movies.find_movies(search_params)
+    if search_params["query"] or advanced:
+        total = movies.count_found_movies(search_params)
+        page_count = max(math.ceil(total / page_size), 1)
+
+        if page < 1:
+            return redirect("/find_movie/1")
+        if page > page_count:
+            return redirect(f"/find_movie/{page_count}")
+
+
+        results = movies.find_movies(search_params, page, page_size)
 
     return render_template("find_movie.html",
-                           query=query,
-                           min_year=min_year,
-                           max_year=max_year,
-                           username=username,
+                           **search_params,
                            advanced=advanced,
-                           genres=genres,
-                           age_limits=age_limits,
                            all_genres=all_genres,
                            all_age_limits=all_age_limits,
-                           results=results)
+                           results=results,
+                           page=page,
+                           page_count=page_count,
+                           total_results=total)
 
 
 @app.route("/movie/<int:movie_id>")
@@ -405,23 +454,23 @@ def create_movie():
 
     movie_id = movies.add_movie(movie_details, user_id, selected_classes)
 
-    def upload_image(image_file, movie_id):
+    def check_image(image_file):
         if image_file:
             if not image_file.filename.endswith(".jpg"):
                 flash("VIRHE: väärä tiedostomuoto")
-                return redirect("/images/" + str(movie_id))
+                return redirect("/new_movie")
 
             image_data = image_file.read()
             if len(image_data) > 100 * 1024:
                 flash("VIRHE: liian suuri kuva")
-                return redirect("/images/" + str(movie_id))
-            photos.add_image(movie_id, image_data)
+                return redirect("/new_movie")
+            return image_data
 
     poster = request.files["poster"]
-    upload_image(poster, movie_id)
+    photos.add_poster(movie_id, check_image(poster)
 
     image = request.files["image"]
-    upload_image(image, movie_id)
+    photos.add_image(movie_id, check_image(image))
 
     return redirect("/movie/" + str(movie_id))
 

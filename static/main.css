@@ -50,7 +50,7 @@ input[type="button"] {
   background-color: #E7C6FF;  /* Lavender background */
   border: 1px solid #E7C6FF;
   padding: 6px 10px;  /* Reduced padding for smaller buttons */
-  color: white;
+  color: #333333;
   cursor: pointer;
   border-radius: 5px;
   font-size: 14px; /* Smaller font size */

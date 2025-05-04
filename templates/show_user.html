@@ -30,10 +30,10 @@
     {% if movies %}
       <p>
         Käyttäjällä on yhteensä
-        {{ movies | count }} elokuvasuositus{% if movies | count != 1 %}ta{% endif %}.
+        {{ total_movies }} elokuva{% if movies | count != 1 %}a{% endif %} (sivu {{ page }} / {{ page_count }}).
       </p>
 
-      <h3>Elokuvasuositukset</h3>
+      <h3>Elokuvat</h3>
       <ul class="movie-list">
         {% for movie in movies %}
           <li class="movie-item">
@@ -69,4 +69,16 @@
     {% endif %}
   </div>
 </div>
+
+<p>
+  {% if page > 1 %}
+    <a href="/user/{{ user.id }}/{{ page - 1 }}">&lt;&lt;</a>
+  {% endif %}
+
+  Sivu {{ page }} / {{ page_count }}
+
+  {% if page < page_count %}
+    <a href="/user/{{ user.id }}/{{ page + 1 }}">&gt;&gt;</a>
+  {% endif %}
+</p>
 {% endblock %}
