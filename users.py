@@ -18,7 +18,6 @@ def get_movies(user_id):
     sql = """SELECT movies.id,
                     movies.title,
                     movies.year,
-                    movies.grade,
                     movies.user_id,
                     COUNT(reviews.id) review_count
              FROM movies

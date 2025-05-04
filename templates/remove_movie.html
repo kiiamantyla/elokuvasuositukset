@@ -4,18 +4,18 @@
 
 
 {% block content %}
-<h2>{{ movie.title }}</h2>
-<h3>Elokuvan poisto</h3>
+<div class="movie-form">
+  <h2>Poista elokuva: {{ movie.title }}</h2>
+  <h4>Haluatko varmasti poistaa tämän elokuvan?</h4>
+  <form action="/remove_movie/{{ movie.id }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="submit" name="remove" value="Poista elokuva">
+  </form>
 
-<p>Elokuva: {{ movie.title }}</p>
-<p>Haluatko varmasti poistaa tämän elokuvan?</p>
-<form action="/remove_movie/{{ movie.id }}" method="post">
-  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-  <input type="submit" name="remove" value="Poista elokuva">
-  <input type="submit" name="back" value="Palaa takaisin">
-</form>
+  <p class="back-link">
+    <a href="/movie/{{ movie.id }}">Takaisin elokuvaan</a>
+  </p>
+</div>
 
-<p>
-  <a href="/movie/{{ movie.id }}">Takaisin elokuvaan</a>
-</p>
+
 {% endblock %}

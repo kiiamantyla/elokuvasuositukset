@@ -2,66 +2,71 @@
 
 {% block title %}Käyttäjä {{ user.username }}{% endblock %}
 
-
 {% block content %}
-<h2>Käyttäjä: {{ user.username }}</h2>
+<div class="profile-details">
+  <h2>Käyttäjä: {{ user.username }}</h2>
 
-{% if user.has_profile_picture %}
-  <img src="/profile_picture/{{ user.id }}" alt="Profiilikuva"/></br>
-  {% if session.user_id == user.id %}
-    <a href="/edit_profile_picture/{{ user.id }}">Muokkaa profiilikuvaa</a>
-  {% endif %}
-{% else %}
-  {% if session.user_id == user.id %}
-    <a href="/edit_profile_picture/{{ user.id }}">Lisää profiilikuva</a>
-  {% endif %}
-{% endif %}
+  <div class="profile-info">
+    {% if user.has_profile_picture %}
+      <img src="/profile_picture/{{ user.id }}" alt="Profiilikuva" class="profile-picture" />
+    {% else %}
+      {% if session.user_id == user.id %}
+        <p>Sinulla ei ole profiilikuvaa.</p>
+      {% endif %}
+    {% endif %}
 
-
-{% if movies %}
-  <p>
-    Käyttäjällä on yhteensä
-    {{ movies | count }} elokuvasuositus{% if movies | count != 1 %}ta{% endif %}.
-  </p>
-
-  <h3>Elokuvasuositukset</h3>
-  <ul class="movie-list">
-    {% for movie in movies %}
-      <li class="movie-item">
-        <a href="/movie/{{ movie.id }}">{{ movie.title }}</a>
-
-        {% if movie.year %}
-          ({{ movie.year }})
+    {% if session.user_id == user.id %}
+      <div class="profile-actions">
+        {% if user.has_profile_picture %}
+          <a href="/edit_profile_picture/{{ user.id }}" class="action-link">Muokkaa profiilikuvaa</a>
+        {% else %}
+          <a href="/edit_profile_picture/{{ user.id }}" class="action-link">Lisää profiilikuva</a>
         {% endif %}
+      </div>
+    {% endif %}
+  </div>
 
-        {% if movie.genres %}
-          – <em>{{ movie.genres | map(attribute='value') | join(', ') }}</em>
-        {% endif %}
+  <div class="user-movies">
+    {% if movies %}
+      <p>
+        Käyttäjällä on yhteensä
+        {{ movies | count }} elokuvasuositus{% if movies | count != 1 %}ta{% endif %}.
+      </p>
 
-        {% if movie.age_limit %}
-          – Ikäraja: {{ movie.age_limit }}
-        {% endif %}
+      <h3>Elokuvasuositukset</h3>
+      <ul class="movie-list">
+        {% for movie in movies %}
+          <li class="movie-item">
+            <p><a href="/movie/{{ movie.id }}" class="movie-title">{{ movie.title }}</a></p>
 
-        {% if movie.grade %}
-          – Arvosana: {{ movie.grade }}/10
-        {% endif %}
+            {% if movie.year %}
+              ({{ movie.year }})
+            {% endif %}
 
-        <br>
-        Arvostelut: {{ movie.review_count or 0 }}
+            {% if movie.genres %}
+              – <em>{{ movie.genres | map(attribute='value') | join(', ') }}</em>
+            {% endif %}
 
-        {% if session.user_id == movie.user_id %}
-          <div class="movie-actions">
-            <a href="/edit_movie/{{ movie.id }}">Muokkaa</a> |
-            <a href="/remove_movie/{{ movie.id }}">Poista</a> |
-            <a href="/images/{{ movie.id }}">Kuvat</a>
-          </div>
-        {% endif %}
+            {% if movie.age_limit %}
+              – Ikäraja: {{ movie.age_limit }}
+            {% endif %}
 
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Käyttäjällä ei ole vielä elokuvasuosituksia.</p>
-{% endif %}
+            <br>
+            Arvostelut: {{ movie.review_count or 0 }}
 
+            {% if session.user_id == movie.user_id %}
+              <div class="movie-actions">
+                <a href="/edit_movie/{{ movie.id }}" class="action-link">Muokkaa</a>
+                <a href="/remove_movie/{{ movie.id }}" class="action-link">Poista</a>
+                <a href="/images/{{ movie.id }}" class="action-link">Kuvat</a>
+              </div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Käyttäjällä ei ole vielä elokuvasuosituksia.</p>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

@@ -2,91 +2,102 @@
 
 {% block title %}{{ movie.title }}{% endblock %}
 
-
 {% block content %}
-<h2>{{ movie.title }}</h2>
+  <div class="movie-details">
+    <h2>{{ movie.title }}</h2>
 
-{% if session.user_id == movie.user_id %}
-<p>
-  <a href="/edit_movie/{{ movie.id }}">Muokkaa</a>
-  <a href="/remove_movie/{{ movie.id }}">Poista</a>
-  <a href="/images/{{ movie.id }}">Kuvat</a>
-</p>
-{% endif %}
+    {% if session.user_id == movie.user_id %}
+      <div class="movie-actions">
+        <a href="/edit_movie/{{ movie.id }}" class="btn">Muokkaa</a>
+        <a href="/remove_movie/{{ movie.id }}" class="btn">Poista</a>
+        <a href="/images/{{ movie.id }}" class="btn">Kuvat</a>
+      </div>
+    {% endif %}
 
-{% for poster in posters %}
-  <img src="/poster/{{ poster.id }}" alt="Elokuvan kansikuva"/>
-{% endfor %}
-
-<p>Julkaisuvuosi: {{ movie.year }}</p>
-<p>Kesto: {{ movie.duration }} min</p>
-
-{% if genres %}
-  <p>Genret:
-    {% for genre in genres %}
-      {{ genre.value }}{% if not loop.last %}, {% endif %}
+    {% for poster in posters %}
+      <div class="movie-poster">
+        <img src="/poster/{{ poster.id }}" alt="Elokuvan kansikuva" />
+      </div>
     {% endfor %}
-  </p>
-{% endif %}
 
-{% if age_limit %}
-  <p>
-    Ikäraja: {{ age_limit.value }}
-  </p>
-{% endif %}
+    <div class="movie-info">
+      <p>Julkaisuvuosi: {{ movie.year }}</p>
+      <p>Kesto: {{ movie.duration }} min</p>
 
-{% if movie.director %}
-  <p>Ohjaaja: {{ movie.director }}</p>
-{% endif %}
+      {% if genres %}
+        <p>Genret:
+          {% for genre in genres %}
+            {{ genre.value }}{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        </p>
+      {% endif %}
 
-{% if movie.language %}
-  <p>Alkuperäinen kieli: {{ movie.language }}</p>
-{% endif %}
+      {% if age_limit %}
+        <p>Ikäraja: {{ age_limit.value }}</p>
+      {% endif %}
 
-{% if movie.main_actors %}
-  <p>Pääosan näyttelijät: {{ movie.main_actors | show_lines }}</p>
-{% endif %}
+      {% if movie.director %}
+        <p>Ohjaaja: {{ movie.director }}</p>
+      {% endif %}
 
-{% if movie.imdb_url %}
-  <p>IMDb-linkki: {{ movie.imdb_url }}</p>
-{% endif %}
+      {% if movie.language %}
+        <p>Alkuperäinen kieli: {{ movie.language }}</p>
+      {% endif %}
 
-<p>Julkaisija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a></p>
+      {% if movie.main_actors %}
+        <p>Pääosan näyttelijät: {{ movie.main_actors | show_lines }}</p>
+      {% endif %}
 
-{% if images %}
-  <p>Kuvia:</p>
-  {% for image in images %}
-    <img src="/image/{{ image.id }}" alt="Elokuvan kuvat"/>
-  {% endfor %}
-{% endif %}
+      {% if movie.imdb_url %}
+        <p>IMDb-linkki: <a href="{{ movie.imdb_url }}" target="_blank">{{ movie.imdb_url }}</a></p>
+      {% endif %}
 
-<h3>Arvostelut</h3>
-{% if reviews %}
-  <p>
-    Keskimääräinen arvosana: {{ review_stats.average }} ({{ review_stats.count}} arvostelu{% if review_stats.count != 1 %}a{% endif %})
-  </p>
-  <ul>
-    {% for review in reviews %}
-    <li>Arvosana: {{ review.grade }},<br /> {{ review.review | show_lines }} <br />
-    <a href="/user/{{ review.user_id }}">{{ review.username }}</a></li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Ei vielä muita arvosteluja.</p>
-{% endif %}
+      <p>Julkaisija: <a href="/user/{{ movie.user_id }}">{{ movie.username }}</a></p>
+    </div>
 
-{% if session.user_id %}
-  <h3>Uusi arvostelu</h3>
-  <form action="/create_review" method="post">
-    <label for="review">Arvostelu:</label> <br />
-      <textarea name="review" id="review" rows="8" cols="60" maxlength="500" required></textarea><br />
-    <label for="grade">Arvosana elokuvasta (1-10):</label> <br />
-    <input type="number" name="grade" id="grade" min="1" max="10" class="small-imput" required /> <br />
-    <input type="hidden" name="movie_id" value="{{ movie.id }}" />
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <p>
-      <input type="submit" value="Lisää arvostelu">
-    </p>
-  </form>
-{% endif %}
+    {% if images %}
+      <div class="movie-images">
+        <p>Kuvia:</p>
+        {% for image in images %}
+          <div class="movie-image">
+            <img src="/image/{{ image.id }}" alt="Elokuvan kuvat"/>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="reviews-section">
+      <h3>Arvostelut</h3>
+      {% if reviews %}
+        <p class="review-stats">
+          Keskimääräinen arvosana: {{ review_stats.average }} ({{ review_stats.count}} arvostelu{% if review_stats.count != 1 %}a{% endif %})
+        </p>
+        <ul>
+          {% for review in reviews %}
+            <li>Arvosana: {{ review.grade }}<br /> {{ review.review | show_lines }} <br />
+            <a href="/user/{{ review.user_id }}">{{ review.username }}</a></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>Ei vielä muita arvosteluja.</p>
+      {% endif %}
+    </div>
+
+    {% if session.user_id %}
+      <div class="review-form">
+        <h3>Uusi arvostelu</h3>
+        <form action="/create_review" method="post">
+          <label for="review">Arvostelu:</label> <br />
+          <textarea name="review" id="review" rows="8" cols="60" maxlength="500" required></textarea><br />
+          <label for="grade">Arvosana elokuvasta (1-10):</label> <br />
+          <input type="number" name="grade" id="grade" min="1" max="10" class="small-input" required /> <br />
+          <input type="hidden" name="movie_id" value="{{ movie.id }}" />
+          <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+          <p>
+            <input type="submit" value="Lisää arvostelu" class="btn">
+          </p>
+        </form>
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

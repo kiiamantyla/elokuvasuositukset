@@ -167,7 +167,11 @@ def find_movies(search_params):
     age_limits = search_params["age_limits"]
 
 
-    sql ="""SELECT DISTINCT movies.id, movies.title
+    sql ="""SELECT DISTINCT movies.id,
+                            movies.title,
+                            movies.user_id,
+                            users.username,
+                            COUNT(reviews.id) review_count
              FROM movies
              LEFT JOIN movie_classes mc_genre ON movies.id = mc_genre.movie_id
              LEFT JOIN classes c_genre ON
@@ -224,6 +228,7 @@ def find_movies(search_params):
         sql += f" AND c_age.value IN ({placeholders})"
         params.extend(age_limit_list)
 
-    sql += " ORDER BY movies.id DESC"
+    sql += """ GROUP BY movies.id, movies.title, movies.user_id
+               ORDER BY movies.id DESC"""
 
     return db.query(sql, params)

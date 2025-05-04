@@ -5,20 +5,25 @@
 
 {% block content %}
 <h2>Kirjaudu sisään</h2>
-<form action="/login" method="post">
-  <p>
-    <label for="username">Tunnus:</label> <br />
-    <input type="text" name="username" id="username" required />
-  </p>
-  <p>
-    <label for="password">Salasana:</label> <br />
-    <input type="password" name="password" id="password" required />
-  </p>
-  <input type="submit" value="Kirjaudu" />
 
-  <p>
-    Eikö sinulla ole vielä tunnusta?
-    <a href="/register">Rekisteröidy</a>
-  </p>
-</form>
+<div class="login-box">
+  <form action="/login" method="post">
+    <div class="form-group">
+      <label for="username">Tunnus:</label>
+      <input type="text" name="username" id="username" required />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Salasana:</label>
+      <input type="password" name="password" id="password" required />
+    </div>
+
+    <input type="submit" value="Kirjaudu" class="login-button" />
+
+    <p class="register-link">
+      Eikö sinulla ole vielä tunnusta?
+      <a href="/register">Rekisteröidy</a>
+    </p>
+  </form>
+</div>
 {% endblock %}

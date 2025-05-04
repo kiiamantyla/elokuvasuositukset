@@ -2,74 +2,84 @@
 
 {% block title %}Elokuvan muokkaus{% endblock %}
 
-
 {% block content %}
-<h2>{{ movie.title }}</h2>
-<h3>Elokuvan muokkaus</h3>
+<div class="movie-form">
+  <h2>Muokkaa elokuvaa: {{ movie.title }}</h2>
 
-<form action="/update_movie" method="post">
-  <p>
-    <label for="title">Elokuvan nimi:</label> <br />
-    <input type="text" name="title" id="title" value="{{ movie.title }}" maxlength="90" required />
-  </p>
-  <p>
-    <label for="year">Elokuvan julkaisuvuosi:</label> <br />
-    <input type="text" name="year" id="year" class="small-input" value="{{ movie.year }}" min="1" max="2050" required />
-  </p>
-  <p>
-    <label for="duration">Kesto (min):</label> <br />
-    <input type="number" name="duration" id="duration" value="{{ movie.duration }}" min="1" required />
-  </p>
-  <p>
-  <label for="genres">Genret:</label> <br />
-  <select name="genres" id="genres" multiple>
-    <option value="">(valitse)</option>
-    {% for genre in all_genres %}
-      {% if genre in genres %}
-        <option value="genre:{{ genre }}" selected>{{ genre }}</option>
-      {% else %}
-        <option value="genre:{{ genre }}">{{ genre }}</option>
-      {% endif %}
-    {% endfor %}
-  </select>
-  <p class="help-text">(Pidä Ctrl(Windows)/Cmd(Mac) pohjassa valitaksesi useita vaihtoehtoja)</p>
-  </p>
+  <form action="/update_movie" method="post" enctype="multipart/form-data">
+    <p class="help-text">Pakolliset kentät on merkitty tähdellä (*).</p>
 
-  <p>
-  <label for="age_limit">Ikäraja:</label> <br />
-  <select name="age_limit" id="age_limit">
-    <option value="">(valitse)</option>
-    {% for age_limit in all_age_limits %}
-      {% if age_limit in age_limits %}
-        <option value="ikäraja:{{ age_limit }}" selected>{{ age_limit }}</option>
-      {% else %}
-        <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
-      {% endif %}
-    {% endfor %}
-  </select>
-  </p>
-  <p>
-    <label for="director">Ohjaaja:</label> <br />
-    <input type="text" name="director" id="director" value="{{ movie.director }}" maxlength="90" />
-  </p>
-  <p>
-    <label for="language">Alkuperäinen kieli:</label> <br />
-    <input type="text" name="language" id="language" value="{{ movie.language }}" maxlength="50" />
-  </p>
-  <p>
-    <label for="main_actors">Pääosan näyttelijät:</label> <br />
-    <textarea name="main_actors" id="main_actors" rows="3" cols="60" maxlength="200">{{ movie.main_actors}}</textarea>
-  </p>
-  <p>
-    <label for="imdb_url">IMDb-linkki:</label> <br />
-    <input type="text" name="imdb_url" id="imdb_url" value="{{ movie.imdb_url }}" />
-  </p>
-  <input type="hidden" name="movie_id" value="{{ movie.id }}" />
-  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-  <input type="submit" value="Tallenna muutokset" />
-</form>
+    <p>
+      <label for="title">Elokuvan nimi: *</label>
+      <input type="text" name="title" id="title" value="{{ movie.title }}" maxlength="90" required />
+    </p>
 
-<p>
-  <a href="/movie/{{ movie.id }}">Takaisin elokuvaan</a>
-</p>
+    <p>
+      <label for="year">Elokuvan julkaisuvuosi: *</label>
+      <input type="number" name="year" id="year" class="small-input" value="{{ movie.year }}" min="1" max="2050" required />
+    </p>
+
+    <p>
+      <label for="duration">Kesto (min): *</label>
+      <input type="number" name="duration" id="duration" value="{{ movie.duration }}" min="1" max="600" required />
+    </p>
+
+    <p>
+      <label for="genres">Genret:</label>
+      <select name="genres" id="genres" multiple>
+        <option value="">(valitse)</option>
+        {% for genre in all_genres %}
+          {% if genre in genres %}
+            <option value="genre:{{ genre }}" selected>{{ genre }}</option>
+          {% else %}
+            <option value="genre:{{ genre }}">{{ genre }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </p>
+    <p class="help-text">Pidä Ctrl (Windows) tai Command (Mac) pohjassa valitaksesi useita vaihtoehtoja.</p>
+
+    <p>
+      <label for="age_limit">Ikäraja:</label>
+      <select name="age_limit" id="age_limit">
+        <option value="">(valitse)</option>
+        {% for age_limit in all_age_limits %}
+          {% if age_limit in age_limits %}
+            <option value="ikäraja:{{ age_limit }}" selected>{{ age_limit }}</option>
+          {% else %}
+            <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </p>
+
+    <p>
+      <label for="director">Ohjaaja:</label>
+      <input type="text" name="director" id="director" value="{{ movie.director }}" maxlength="90" />
+    </p>
+
+    <p>
+      <label for="language">Alkuperäinen kieli:</label>
+      <input type="text" name="language" id="language" value="{{ movie.language }}" maxlength="50" />
+    </p>
+
+    <p>
+      <label for="main_actors">Pääosan näyttelijät:</label>
+      <textarea name="main_actors" id="main_actors" rows="3" cols="60" maxlength="200">{{ movie.main_actors }}</textarea>
+    </p>
+
+    <p>
+      <label for="imdb_url">IMDb-linkki:</label>
+      <input type="text" name="imdb_url" id="imdb_url" value="{{ movie.imdb_url }}" />
+    </p>
+
+    <input type="hidden" name="movie_id" value="{{ movie.id }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="submit" value="Tallenna muutokset" />
+  </form>
+
+  <p class="back-link">
+    <a href="/movie/{{ movie.id }}">Takaisin elokuvaan</a>
+  </p>
+</div>
 {% endblock %}

@@ -2,70 +2,74 @@
 
 {% block title %}Uusi elokuva{% endblock %}
 
-
 {% block content %}
-<h2>Uusi elokuva</h2>
-<form action="/create_movie" method="post" enctype="multipart/form-data">
-  <p>
-    <label for="title">Elokuvan nimi:</label> <br />
-    <input type="text" name="title" id="title" maxlength="90" required />
-  </p>
-  <p>
-    <label for="year">Elokuvan julkaisuvuosi:</label> <br />
-    <input type="number" name="year" id="year" class="small-input" min="1" max="2050" required />
-  </p>
-  <p>
-    <label for="duration">Kesto (min):</label> <br />
-    <input type="number" name="duration" id="duration" min="1" max="600" required />
-  </p>
+  <div class="movie-form">
+    <h2>Uusi elokuva</h2>
+    <form action="/create_movie" method="post" enctype="multipart/form-data">
 
-  <p>
-    <label for="genres">Genret:</label> <br />
-  <select name="genres" id="genres" multiple>
-    <option value="">(valitse)</option>
-    {% for genre in genres %}
-      <option value="genre:{{ genre }}">{{ genre }}</option>
-    {% endfor %}
-  </select>
-  </p>
-  <p class="help-text">Pidä Ctrl (Windows) tai Command (Mac) pohjassa valitaksesi useita vaihtoehtoja.</p>
+    <p class="help-text">Pakolliset kentät on merkitty tähdellä (*).</p>
+      <p>
+        <label for="title">Elokuvan nimi: *</label>
+        <input type="text" name="title" id="title" maxlength="90" required />
+      </p>
+      <p>
+        <label for="year">Elokuvan julkaisuvuosi: *</label>
+        <input type="number" name="year" id="year" class="small-input" min="1" max="2050" required />
+      </p>
+      <p>
+        <label for="duration">Kesto (min): *</label>
+        <input type="number" name="duration" id="duration" min="1" max="600" required />
+      </p>
 
-  <p>
-    <label for="age_limit">Ikäraja:</label> <br />
-  <select name="age_limit" id="age_limit">
-    <option value="">(valitse)</option>
-    {% for age_limit in age_limits %}
-      <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
-    {% endfor %}
-  </select>
-  </p>
+      <p>
+        <label for="genres">Genret:</label>
+        <select name="genres" id="genres" multiple>
+          <option value="">(valitse)</option>
+          {% for genre in genres %}
+            <option value="genre:{{ genre }}">{{ genre }}</option>
+          {% endfor %}
+        </select>
+      </p>
+      <p class="help-text">Pidä Ctrl (Windows) tai Command (Mac) pohjassa valitaksesi useita vaihtoehtoja.</p>
 
-  <p>
-    <label for="director">Ohjaaja:</label> <br />
-    <input type="text" name="director" id="director" maxlength="90" />
-  </p>
-  <p>
-    <label for="language">Alkuperäinen kieli:</label> <br />
-    <input type="text" name="language" id="language" maxlength="50" />
-  </p>
-  <p>
-    <label for="main_actors">Pääosan näyttelijät:</label> <br />
-    <textarea name="main_actors" id="main_actors" rows="3" cols="60" maxlength="200"></textarea>
-  </p>
-  <p>
-    <label for="imdb_url">IMDb-linkki:</label> <br />
-    <input type="text" name="imdb_url" id="imdb_url" />
-  </p>
+      <p>
+        <label for="age_limit">Ikäraja:</label>
+        <select name="age_limit" id="age_limit">
+          <option value="">(valitse)</option>
+          {% for age_limit in age_limits %}
+            <option value="ikäraja:{{ age_limit }}">{{ age_limit }}</option>
+          {% endfor %}
+        </select>
+      </p>
 
-  <p>
-    <label for="poster">Kansikuva:</label> <br />
-    <input type="file" name="poster" id="poster" accept=".jpg" />
-  </p>
-  <p>
-    <label for="image">Muita kuvia:</label> <br />
-    <input type="file" name="image" accept=".jpg" />
-  </p>
-  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-  <input type="submit" value="Luo suositus" />
-</form>
+      <p>
+        <label for="director">Ohjaaja:</label>
+        <input type="text" name="director" id="director" maxlength="90" />
+      </p>
+      <p>
+        <label for="language">Alkuperäinen kieli:</label>
+        <input type="text" name="language" id="language" maxlength="50" />
+      </p>
+      <p>
+        <label for="main_actors">Pääosan näyttelijät:</label>
+        <textarea name="main_actors" id="main_actors" rows="3" cols="60" maxlength="200"></textarea>
+      </p>
+      <p>
+        <label for="imdb_url">IMDb-linkki:</label>
+        <input type="text" name="imdb_url" id="imdb_url" />
+      </p>
+
+      <p>
+        <label for="poster">Kansikuva:</label>
+        <input type="file" name="poster" id="poster" accept=".jpg" />
+      </p>
+      <p>
+        <label for="image">Muita kuvia:</label>
+        <input type="file" name="image" accept=".jpg" />
+      </p>
+
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      <input type="submit" value="Luo suositus" />
+    </form>
+  </div>
 {% endblock %}

@@ -1,93 +1,495 @@
+/* YLEISET TYYLIT */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  margin: auto;
-  max-width: 50em;
-  color: #222;
-  font-family: sans-serif;
-  background-color: #fdfaf6;
+  font-family: Arial, sans-serif;
+  background-color: #FDFAF6;
+  color: #333333;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* Header ja Footer */
+header, footer {
+  background-color: #ffd6ff;
+  padding: 20px;
+  text-align: center;
+  color: #666666;
 }
 
 h1, h2, h3 {
-    color: #222;
-    margin-top: 1em;
-    margin-bottom: 0.5em;
+  color: #333333;
 }
 
+.help-text {
+  font-size: 0.9rem; /* Slightly smaller font size */
+  color: #666666; /* Light grey color for text */
+  margin-bottom: 10px; /* Adds some space below the help text */
+  line-height: 1.4; /* Makes the text a bit more readable */
+}
+
+/* Linkit ja hover */
 a {
-  color: #007acc;
+  color: #a88fe8;
   text-decoration: none;
 }
 
 a:hover {
+  color: #9069dd;
   text-decoration: underline;
 }
 
-.movie {
-  border: 2px solid black;
-  margin: 1em;
-  padding: 0.2em 0.5em;
-}
-
-.info {
-  border: 1px solid #444;
-  margin: 1em 0;
-  padding: 0.8em;
-  background-color: #e8f4ff;
-  color: #005a99;
+/* Painikkeet */
+button,
+input[type="submit"],
+input[type="button"] {
+  background-color: #E7C6FF;  /* Lavender background */
+  border: 1px solid #E7C6FF;
+  padding: 6px 10px;  /* Reduced padding for smaller buttons */
+  color: white;
+  cursor: pointer;
   border-radius: 5px;
+  font-size: 14px; /* Smaller font size */
+  margin-top: 5px;
+}
+
+/* Button hover effect */
+button:hover,
+input[type="submit"]:hover {
+  background-color: #C8B6FF;  /* Soft Lilac hover */
+  border-color: #C8B6FF;
+}
+
+/* Syötteet ja Lomakkeet */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+textarea, select {
+  background-color: #F9F9F9;  /* Vaalea harmaa tausta syötteille */
+  border: 1px solid #CCCCCC;  /* Vaalea harmaa reunus */
+  padding: 8px 12px;
+  border-radius: 5px;
+  width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus, select:focus {
+  border-color: #C8B6FF;  /* Soft Lilac focus border */
+}
+
+/* Yleinen asettelu */
+.container {
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+section {
+  background-color: #B8C0FF;  /* Pale Blue background for sections */
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+ul, ol {
+  list-style-type: none;
+}
+
+h2, h3 {
+  margin-top: 20px;
+  margin-bottom: 7px;
+  color: #333333;
+  border-bottom: 2px solid #C8B6FF;  /* Soft Lilac for headings */
+}
+
+h4 {
+  margin: 20px;
 }
 
 
-.user-profile {
-  background-color: #ffffff;
-  padding: 1.5em;
-  margin: 2em auto;
-  max-width: 800px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+/* ETUSIVU */
+
+/* Container for movie items */
+.movies-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Space between items */
 }
 
 .movie-list {
-  list-style: none;
-  padding: 0;
-  margin-top: 1em;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 .movie-item {
-  background: #f7f7f7;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-left: 4px solid #007acc;
-  border-radius: 4px;
+  background: linear-gradient(to bottom, #fff0f4, #ffe5ec);
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #d0d8ff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.movie-item a {
-  color: #007acc;
-  font-weight: bold;
+/* Movie title styling */
+.movie-title {
+  color: #fb6f92; /* Cotton candy pink */
+  text-decoration: none;
+  font-size: 1.2em;
 }
 
-.movie-item a:hover {
+.movie-title:hover {
+  color: #f18ba7;
   text-decoration: underline;
 }
 
+
+
+
+/* ETSI ELOKUVA */
+
+.advanced-search {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+
+
+
+/* LAYOUT */
+/* Navbar */
+.navbar {
+  background-color: #E7C6FF;  /* Soft lavender */
+  padding: 10px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.navbar a {
+  color: #333333;
+  text-decoration: none;
+  margin: 0 15px;
+}
+
+.navbar a:hover {
+  color: #A89EFF;  /* Soft lilac hover */
+  text-decoration: underline;
+}
+
+/* User info box styling */
+.user-info {
+  background-color: #BBE0FE;  /* Light blue */
+  padding: 10px;
+  margin: 10px 0;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.user-info a {
+  color: #333333;
+  text-decoration: none;
+}
+
+.user-info a:hover {
+  text-decoration: underline;
+}
+
+/* Flash messages styling */
+.info {
+  font-size: 1rem; /* Standard font size */
+  color: #333333; /* Darker text color for better readability */
+  background-color: #bbd0ff; /* Soft lavender background */
+  padding: 10px; /* Adds padding for spacing */
+  border-radius: 5px; /* Rounded corners */
+  margin-top: 10px; /* Adds space above the info box */
+  margin-bottom: 10px; /* Adds space below the info box */
+  margin-left: 20px; /* Adds space to the left */
+  margin-right: 20px; /* Adds space to the right */
+  border: 1px solid #a2c1ff; /* Light border to define the box */
+}
+
+
+
+
+/* ELOKUVASIVU JA PROFIILISIVU */
+/* Elokuva- ja profiiliboxit */
+.movie-details,
+.profile-details {
+  background: linear-gradient(to top right, #e0e7ff, #f0f4ff, #c8d6ff);
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 1200px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Otsikot */
+.movie-details h2,
+.profile-details h2 {
+  color: #333333;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+/* Painikkeet */
+.movie-actions a,
+.profile-actions a {
+  padding: 8px 15px;
+  background-color: #ffd6ff;
+  border-radius: 5px;
+  text-decoration: none;
+  color: #333;
+  margin-right: 10px;
+}
+
+.movie-actions a:hover,
+.profile-actions a:hover {
+  background-color: #ffecff;
+}
+
+/* Elokuvasivun lisätyylit */
 .movie-actions {
-  margin-top: 0.5em;
-  font-size: 0.9em;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
-.movie-actions a {
-  color: #b30000;
+.movie-info p {
+  margin-bottom: 10px;
 }
 
-.movie-actions a:hover {
+/* Arvosteluosio */
+.reviews-section ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.reviews-section li {
+  background-color: #ffebff;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.review-form textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.review-form input[type="number"] {
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.review-form input[type="submit"] {
+  padding: 10px 20px;
+  background-color: #c8b6ff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.review-form input[type="submit"]:hover {
+  background-color: #b8c0ff;
+}
+
+.review-stats {
+  margin: 8px;
+}
+
+/* Profiilisivun lisätyylit */
+.profile-info {
+  margin-bottom: 20px;
+}
+
+.profile-info img.profile-picture {
+  max-width: 150px;
+  border-radius: 50%;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.user-movies {
+  margin-top: 30px;
+}
+
+
+
+
+/* KUVATSIVU JA PROFIILIKUVASIVU */
+.image-section, .upload-section {
+  background: linear-gradient(to top right, #eef1ff, #f7f9ff, #e1e8ff);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Yksittäinen kuva + checkbox ryhmänä */
+.poster-item, .image-item {
+  display: inline-block;
+  margin: 10px;
+  text-align: center;
+}
+
+.movie-image {
+  max-width: 150px;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin-bottom: 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Checkboxit kuvien alla */
+.image-checkbox {
+  margin-top: 5px;
+}
+
+/* Takaisin-linkin tyyli */
+.back-link {
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.back-link a {
+  color: #a678b4; /* Hieman tummempi violetti */
+  text-decoration: none;
+}
+
+.back-link a:hover {
   text-decoration: underline;
 }
 
 
-.small-input {
-  width: 55px;
+/* KIRJAUTUMISSIVU JA REKISTÖRÖITYMISSIVU */
+.login-box, .register-box {
+  background: linear-gradient(to top right, #f7f9ff, #eef1ff);
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 400px;
+  margin: 40px auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.help-text {
-  font-size: 0.8em;
-  color: #888;
+.form-login .form-group, .form-register .form-group {
+  margin-bottom: 15px;
+}
+
+.form-login label, .form-register label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-login input[type="text"],
+.form-login input[type="password"],
+.form-register input[type="text"],
+.form-register input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.login-button, .register-button {
+  background-color: #c8b6ff;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.login-button:hover, .register-button:hover {
+  background-color: #b8a2ff;
+}
+
+.register-link, .login-link{
+  text-align: center;
+  margin-top: 20px;
+}
+
+
+
+/* UUSI ELOKUVA JA ELOKUVAN MUOKKAUS JA POISTA ELOKUVASIVU */
+.movie-form {
+  background: linear-gradient(to top right, #e0e7ff, #f0f4ff, #c8d6ff); /* Tausta, jossa kevyt sininen ja vaaleanpunainen */
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 30px auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Lisää varjoa syvyyden antamiseksi */
+}
+
+/* Lomakkeen otsikko */
+.movie-form h2 {
+  color: #333333; /* Tumma väri otsikolle */
+  font-size: 2em;
+  margin-bottom: 5px; /* Pienennetty väli otsikon ja lomakkeen välillä */
+  text-align: center; /* Keskittää otsikon */
+}
+
+.movie-form h3 {
+  color: #333333; /* Tumma väri otsikolle */
+  font-size: 1.5em;
+  margin-bottom: 5px; /* Pienennetty väli otsikon ja lomakkeen välillä */
+}
+
+/* Lomakkeen kentät */
+.movie-form p {
+  margin-bottom: 15px; /* Pienennetty väli kenttien ja niiden välillä */
+}
+
+.movie-form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333; /* Tumma väri teksteille */
+}
+
+/* Syötekentät */
+.movie-form input[type="text"],
+.movie-form input[type="number"],
+.movie-form select,
+.movie-form textarea,
+.movie-form input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+/* Tekstialue */
+.movie-form textarea {
+  height: 150px; /* Lisää korkeutta tekstikentälle */
+}
+
+/* Pienet syötekentät */
+.movie-form .small-input {
+  width: 60%;
+}
+
+/* Lomakkeen ohjeet */
+.movie-form .help-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 1px;
 }

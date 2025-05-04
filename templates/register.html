@@ -5,24 +5,30 @@
 
 {% block content %}
 <h2>Luo tunnus</h2>
-<form action="/create_user" method="post">
-  <p>
-    <label for="username">Tunnus:</label> <br />
-    <input type="text" name="username" id="username" required />
-  </p>
-  <p>
-    <label for ="password1">Salasana:</label> <br />
-    <input type="password" name="password1" id="password1" required/>
-  </p>
-  <p>
-    <label for="password2">Salasana uudestaan:</label> <br />
-    <input type="password" name="password2" id="password2" required/>
-  </p>
-  <input type="submit" value="Luo tunnus" />
 
-  <p>
-    Onko sinulla jo tunnus?
-    <a href="/login">Kirjaudu sisään</a>
-  </p>
-</form>
+<div class="register-box">
+  <form action="/create_user" method="post">
+    <div class="form-group">
+      <label for="username">Tunnus:</label>
+      <input type="text" name="username" id="username" required />
+    </div>
+
+    <div class="form-group">
+      <label for="password1">Salasana:</label>
+      <input type="password" name="password1" id="password1" required />
+    </div>
+
+    <div class="form-group">
+      <label for="password2">Salasana uudestaan:</label>
+      <input type="password" name="password2" id="password2" required />
+    </div>
+
+    <input type="submit" value="Luo tunnus" class="register-button" />
+
+    <p class="login-link">
+      Onko sinulla jo tunnus?
+      <a href="/login">Kirjaudu sisään</a>
+    </p>
+  </form>
+</div>
 {% endblock %}
